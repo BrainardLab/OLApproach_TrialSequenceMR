@@ -133,10 +133,6 @@ protocolParams.attentionEligibleTrialTypes = [1];
 %
 % Modulation and direction indices match on each trial, so we just specify
 % them once in a single array.
-%
-% NOTE: Could add some checking that desired contrasts, frequencies and phases
-% are available in the ModulationStartsStops file.  Not sure where this
-% checking best happens.
 protocolParams.trialTypeOrder = [randperm(6),randperm(6),randperm(6),randperm(6)];
 protocolParams.nTrials = length(protocolParams.trialTypeOrder);
       
@@ -195,6 +191,11 @@ pause(radiometerPauseDuration);
 protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 
 %% Make the corrected modulation primaries
+%
+% Could add check to OLMakeDirectionCorrectedPrimaries that pupil and field size match
+% in the direction parameters and as specified in protocol params here, if the former
+% are part of the direction. Might have to pass protocol params down into the called
+% routine. Could also do this in other routines below, I think.
 OLMakeDirectionCorrectedPrimaries(ol,protocolParams,'verbose',protocolParams.verbose);
 OLCheckPrimaryCorrection(protocolParams);
 

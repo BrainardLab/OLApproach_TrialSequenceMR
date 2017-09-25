@@ -136,10 +136,6 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 %
 % Modulation and direction indices match on each trial, so we just specify
 % them once in a single array.
-%
-% NOTE: Could add some checking that desired contrasts, frequencies and phases
-% are available in the ModulationStartsStops file.  Not sure where this
-% checking best happens.
 protocolParams.trialTypeOrder = [randperm(6),randperm(6),randperm(6),randperm(6)];
 protocolParams.nTrials = length(protocolParams.trialTypeOrder);
       
