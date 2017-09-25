@@ -33,10 +33,10 @@ protocolParams.plotWhenSimulating = true;
 %
 % The first trial type has its contrast set to 0 below, and is a blank
 % trial, despite the fact that you might think it involved a modulation.
-protocolParams.modulationNames = {'MaxContrast3sSegment' ...
-    'MaxContrast3sSegment' ...
-    'MaxContrast3sSegment' ...
-    'MaxContrast3sSegment' ...
+protocolParams.modulationNames = {'MaxContrast3sPulse' ...
+    'MaxContrast3sPulse' ...
+    'MaxContrast3sPulse' ...
+    'MaxContrast3sPulse' ...
     };
                               
 protocolParams.directionNames = {...
@@ -49,9 +49,14 @@ protocolParams.directionNames = {...
 % Flag as to whether to run the correction/validation at all for each direction.
 % You set to true here entries for the unique directions, so as not
 % to re-correct the same file more than once. This saves time.
+%
+% Note that, for obscure and boring reasons, the first entry in this cell array
+% needs to be true.  That should never be a problem, because we always want to
+% validate each direction once and only once, and it is as easy to validate the
+% first occurrance of a direction as a subsequent one.
 protocolParams.doCorrectionAndValidationFlag = {...
-    false, ...
     true, ...
+    false, ...
     true, ...
     true, ...
     };
@@ -70,6 +75,9 @@ protocolParams.correctBySimulation = [...
     false ...
     ];
 
+% Could add a validate by simulation flag here, if we ever get to a point
+% where we want to trust the nominal spectra.
+
 % Contrasts to use, relative to the powerLevel = 1 modulation in the
 % directions file.
 %
@@ -85,10 +93,8 @@ protocolParams.trialTypeParams = [...
 %
 % These are used to construct photoreceptors for validation for directions
 % (e.g. light flux) where they are not available in the direction file.
-% They can also be used to check for consistency.  
-%
-% If we ever want to run with more than one field size and pupil size in a single 
-% run, this will need a little rethinking.
+% They are checked for consistency with direction parameters that specify
+% these fields in OLAnalyzeDirectionCorrectedPrimaries.
 protocolParams.fieldSizeDegrees = 60;
 protocolParams.pupilDiameterMm = 8;
 
@@ -197,7 +203,11 @@ protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 % are part of the direction. Might have to pass protocol params down into the called
 % routine. Could also do this in other routines below, I think.
 OLMakeDirectionCorrectedPrimaries(ol,protocolParams,'verbose',protocolParams.verbose);
-OLCheckPrimaryCorrection(protocolParams);
+
+% This routine is mainly to debug the correction procedure, not particularly
+% useful once things are humming along.  One would use it if the validations
+% are coming out badly and it was necessary to track things down.
+% OLCheckPrimaryCorrection(protocolParams);
 
 %% Make the modulation starts and stops
 OLMakeModulationStartsStops(protocolParams.modulationNames,protocolParams.directionNames, protocolParams,'verbose',protocolParams.verbose);
