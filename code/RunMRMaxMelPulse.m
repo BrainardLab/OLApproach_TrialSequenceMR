@@ -81,6 +81,17 @@ protocolParams.trialTypeParams = [...
     struct('contrast',1) ...
     ];
 
+%% Field size and pupil size.
+%
+% These are used to construct photoreceptors for validation for directions
+% (e.g. light flux) where they are not available in the direction file.
+% They can also be used to check for consistency.  
+%
+% If we ever want to run with more than one field size and pupil size in a single 
+% run, this will need a little rethinking.
+protocolParams.fieldSizeDegrees = 60;
+protocolParams.pupilDiameterMm = 8;
+
 %% Trial timing parameters.
 %
 % Trial duration - total time for each trial. 
@@ -194,14 +205,11 @@ OLMakeModulationStartsStops(protocolParams.modulationNames,protocolParams.direct
 OLValidateDirectionCorrectedPrimaries(ol,protocolParams,'Pre');
 OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
 
-%% Run demo code
-%ModulationTrialSequenceMR.Demo(ol,protocolParams);
-
 %% Run experiment
 %
 % Part of a protocol is the desired number of scans.  Calling the Experiment routine
 % is for one scan.
-ModulationTrialSequenceMR.Experiment(ol,protocolParams,'scanNumber',1,'verbose',protocolParams.verbose);
+ModulationTrialSequenceMR.Experiment(ol,protocolParams,'scanNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up
 ol.setAll(true);

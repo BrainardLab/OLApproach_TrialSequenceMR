@@ -21,7 +21,7 @@ protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate = true;
-protocolParams.plotWhenSimulating = true;
+protocolParams.plotWhenSimulating = false;
 
 %% Modulations used in this experiment
 % 
@@ -84,6 +84,17 @@ protocolParams.trialTypeParams = [...
     struct('contrast',0.05) ...
     struct('contrast',0.0) ...
     ];
+
+%% Field size and pupil size.
+%
+% These are used to construct photoreceptors for validation for directions
+% (e.g. light flux) where they are not available in the direction file.
+% They can also be used to check for consistency.  
+%
+% If we ever want to run with more than one field size and pupil size in a single 
+% run, this will need a little rethinking.
+protocolParams.fieldSizeDegrees = 60;
+protocolParams.pupilDiameterMm = 8;
 
 %% Trial timing parameters.
 %
@@ -196,9 +207,6 @@ OLMakeModulationStartsStops(protocolParams.modulationNames,protocolParams.direct
 %% Validate direction corrected primaries prior to experiemnt
 OLValidateDirectionCorrectedPrimaries(ol,protocolParams,'Pre');
 OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
-
-%% Run demo code
-%ModulationTrialSequenceMR.Demo(ol,protocolParams);
 
 %% Run experiment
 %
