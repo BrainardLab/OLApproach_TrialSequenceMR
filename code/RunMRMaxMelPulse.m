@@ -22,10 +22,11 @@ protocolParams.protocolOutputName = 'MMP';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate = true;
+protocolParams.plotWhenSimulating = true;
 
-% Modulations used in this experiment
+%% Modulations used in this experiment
 % 
-% The set of arrays below should have the same length, the entries get paired.
+% The set of arrays in this cell should have the same length, the entries get paired.
 %
 % Do not change the order of these directions without also fixing up
 % the Demo and Experimental programs, which are counting on this order.
@@ -48,20 +49,21 @@ protocolParams.directionNames = {...
 % Flag as to whether to run the correction/validation at all for each direction.
 % You set to true here entries for the unique directions, so as not
 % to re-correct the same file more than once. This saves time.
-protocolParams.doCorrectionFlag = {...
+protocolParams.doCorrectionAndValidationFlag = {...
     false, ...
     true, ...
     true, ...
     true, ...
     };
 
-% This is also related to directions.  This determines whether the 
-% correction gets done using the radiometer (set to true) or just by
-% simulation (just uses nominal spectra on each iteration of the correction.)
-% Usually you will want all of these to be true, unless you've determined
-% that for the particular box and directions you're working with you don't need
-% the extra precision provided by spectrum correction.
-protocolParams.directionsCorrect = [...
+% This is also related to directions.  This determines whether the
+% correction gets done using the radiometer (set to false) or just by
+% simulation (set to true, just uses nominal spectra on each iteration of
+% the correction.) Usually you will want all of these to be false, unless
+% you've determined that for the particular box and directions you're
+% working with you don't need the extra precision provided by spectrum
+% correction.
+protocolParams.correctBySimulation = [...
     false ...
     false ...
     false ...
@@ -70,6 +72,8 @@ protocolParams.directionsCorrect = [...
 
 % Contrasts to use, relative to the powerLevel = 1 modulation in the
 % directions file.
+%
+% Setting a contrast to 0 provides a blank trial type.
 protocolParams.trialTypeParams = [...
     struct('contrast',0) ...
     struct('contrast',1) ...
@@ -77,18 +81,7 @@ protocolParams.trialTypeParams = [...
     struct('contrast',1) ...
     ];
 
-% Field size and pupil size.
-%
-% These are used to construct photoreceptors for validation for directions
-% (e.g. light flux) where they are not available in the direction file.
-% They can also be used to check for consistency.  
-%
-% If we ever want to run with more than one field size and pupil size in a single 
-% run, this will need a little rethinking.
-protocolParams.fieldSizeDegrees = 60;
-protocolParams.pupilDiameterMm = 8;
-
-% Trial timing parameters.
+%% Trial timing parameters.
 %
 % Trial duration - total time for each trial. 
 protocolParams.trialDuration = 16;
@@ -104,7 +97,7 @@ protocolParams.trialMaxJitterTimeSec = 3;                  % Phase shifts in sec
 % Set ISI time in seconds
 protocolParams.isiTime = 0;                             
 
-% Attention task parameters.
+%% Attention task parameters
 %
 % Currently, if you have an attention event then all trial types
 % must have the same duration, and the attention event duration
@@ -125,20 +118,18 @@ protocolParams.attentionEventProb = 1;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 protocolParams.attentionEligibleTrialTypes = [1];
 
+%% Set trial sequence
+%
 % Modulation and direction indices match on each trial, so we just specify
 % them once in a single array.
 %
-% Need to add some checking that desired contrasts, frequencies and phases
+% NOTE: Could add some checking that desired contrasts, frequencies and phases
 % are available in the ModulationStartsStops file.  Not sure where this
 % checking best happens.
-%
-% To make sense of all this, we need to understand OLModulationParamsDictionary fields,
-% OLReceptorIsolateMakeModulationStartsStops, and possibly some of the other modulation
-% routines.
 protocolParams.trialTypeOrder = [randperm(6),randperm(6),randperm(6),randperm(6)];
 protocolParams.nTrials = length(protocolParams.trialTypeOrder);
       
-% OneLight parameters
+%% OneLight parameters
 protocolParams.boxName = 'BoxB';  
 protocolParams.calibrationType = 'BoxBRandomizedLongCableDStubby1_ND00';
 protocolParams.takeCalStateMeasurements = true;
@@ -175,7 +166,7 @@ if (length(protocolParams.modulationNames) ~= length(protocolParams.directionNam
 end
 
 %% Open the OneLight
-ol = OneLight('simulate',protocolParams.simulate); drawnow;
+ol = OneLight('simulate',protocolParams.simulate,'plotWhenSimulating',protocolParams.plotWhenSimulating); drawnow;
 
 %% Let user get the radiometer set up
 radiometerPauseDuration = 0;
