@@ -20,8 +20,13 @@ protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate = true;
-protocolParams.plotWhenSimulating = false;
+protocolParams.simulate.oneLight = true;
+protocolParams.simulate.makePlots = true;
+
+% Unusued params in this approach
+% protocolParams.simulate.observer = true;
+% protocolParams.simulate.operator = true;
+
 
 %% Modulations used in this experiment
 % 
@@ -182,7 +187,7 @@ if (length(protocolParams.modulationNames) ~= length(protocolParams.directionNam
 end
 
 %% Open the OneLight
-ol = OneLight('simulate',protocolParams.simulate,'plotWhenSimulating',protocolParams.plotWhenSimulating); drawnow;
+ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
 
 %% Let user get the radiometer set up
 radiometerPauseDuration = 0;
