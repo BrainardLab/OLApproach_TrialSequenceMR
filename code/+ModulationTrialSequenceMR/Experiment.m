@@ -17,13 +17,13 @@ function Experiment(ol,protocolParams,varargin)
 % Optional key/value pairs:
 %    verbose (logical)         true       Be chatty?
 %    playSound (logical)       false      Play a sound when the experiment is ready.
-%    acquistionNumber (value)  []         Acqusition (aka scan) number for output name
+%    acquisitionNumber (value) []         Acqusition (aka scan) number for output name
 
 %% Parse
 p = inputParser;
 p.addParameter('verbose',true,@islogical);
 p.addParameter('playSound',false,@islogical);
-p.addParameter('scanNumber',[],@isnumeric);
+p.addParameter('acquisitionNumber',[],@isnumeric);
 p.parse(varargin{:});
 
 %% Where the data goes
@@ -32,16 +32,16 @@ if ~exist(savePath,'dir')
     mkdir(savePath);
 end
 
-%% Get acquistion (scan) number if not set
-if (isempty(p.Results.acquistionNumber))
-    protocolParams.acquistionNumber = input('Enter acquisition (aka scan) number: ');
+%% Get acquisition (scan) number if not set
+if (isempty(p.Results.acquisitionNumber))
+    protocolParams.acquisitionNumber = input('Enter acquisition (aka scan) number: ');
 else
-    protocolParams.acquistionNumber = p.Results.acquistionNumber;
+    protocolParams.acquisitionNumber = p.Results.acquisitionNumber;
 end
     
 %% Start session log
 %
-% Add protocol output name and acquistion (scan) number
+% Add protocol output name and acquisition (scan) number
 protocolParams = OLSessionLog(protocolParams,'Experiment','StartEnd','start');
 
 %% Get the modulation starts/stops for each trial type
@@ -100,12 +100,12 @@ mglListener('quit');
 %
 % Save protocolParams, block, responseStruct.
 % Make sure not to overwrite an existing file.
-outputFile = fullfile(savePath,[protocolParams.sessionName '_' protocolParams.protocolOutputName sprintf('_scan%d.mat',protocolParams.acquistionNumber)]);
+outputFile = fullfile(savePath,[protocolParams.sessionName '_' protocolParams.protocolOutputName sprintf('_scan%d.mat',protocolParams.acquisitionNumber)]);
 while (exist(outputFile,'file'))
-    protocolParams.acquistionNumber = input(sprintf('Output file %s exists, enter correct acquisition number: \n',outputFile));
-    outputFile = fullfile(savePath,[protocolParams.sessionName sprintf('_scan%d.mat',protocolParams.acquistionNumber)]);
+    protocolParams.acquisitionNumber = input(sprintf('Output file %s exists, enter correct acquisition number: \n',outputFile));
+    outputFile = fullfile(savePath,[protocolParams.sessionName sprintf('_scan%d.mat',protocolParams.acquisitionNumber)]);
 end
-responseStruct.acquistionNumber = protocolParams.acquistionNumber;
+responseStruct.acquisitionNumber = protocolParams.acquisitionNumber;
 save(outputFile,'protocolParams', 'block', 'responseStruct');
 
 %% Close Session Log

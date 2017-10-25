@@ -223,7 +223,7 @@ OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
 %
 % Part of a protocol is the desired number of scans.  Calling the Experiment routine
 % is for one scan.
-ModulationTrialSequenceMR.Experiment(ol,protocolParams,'scanNumber',[],'verbose',protocolParams.verbose);
+ModulationTrialSequenceMR.Experiment(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up
 ol.setAll(true);
