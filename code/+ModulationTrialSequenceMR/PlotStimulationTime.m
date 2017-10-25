@@ -24,7 +24,7 @@ p.parse(varargin{:});
 
 %% Print out general information about the scan.
 if p.Results.verbose == true
-    display(sprintf('Scan Number: %s',num2str(responseStruct.scanNumber)))
+    display(sprintf('Acquisition (scan) number: %s',num2str(responseStruct.acquistionNumber)))
     display(sprintf('Number of events found: %s', num2str(length(responseStruct.events))))
     display(sprintf('Total scan time length: %s (sec)',num2str(responseStruct.tBlockEnd-responseStruct.tBlockStart)))
 end
