@@ -1,13 +1,14 @@
-% RunMRContrastResponseFunction
+% RunMRMaxMelPulse
 %
 % Description:
-%   Define the parameters for the MRContrastResponseFunction protocol of the
+%   Define the parameters for the MRMaxMelPulse protocol of the
 %   OLApproach_TrialSequenceMR approach, and then invoke each of the
 %   steps required to set up and run a session of the experiment.
 
 % 6/28/17  dhb  Added first history comment.
 %          dhb  Move params.photoreceptorClasses into the dictionaries.
 %          dhb  Move params.useAmbient into the dictionaries.
+% 09/20/17 dhb, gka, hmm  Copy over the CRF version and start editing.
 
 %% Clear
 clear; close all;
@@ -16,21 +17,12 @@ clear; close all;
 %
 % Who we are and what we're doing today
 protocolParams.approach = 'OLApproach_TrialSequenceMR';
-protocolParams.protocol = 'MRContrastResponseFunction';
-protocolParams.protocolOutputName = 'CRF';
+protocolParams.protocol = 'MRMaxMelPulse';
+protocolParams.protocolOutputName = 'MMP';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
-<<<<<<< HEAD:code/protocols/MRContrastResponseFunction/RunMRContrastResponseFunction.m
-protocolParams.simulate = false;
-=======
-protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = true;
->>>>>>> 904b3e886ce8ea082842ab8eff15cfbe2d0a8dde:code/RunMRContrastResponseFunction.m
-
-% Unusued params in this approach
-% protocolParams.simulate.observer = true;
-% protocolParams.simulate.operator = true;
-
+protocolParams.simulate = true;
+protocolParams.plotWhenSimulating = true;
 
 %% Modulations used in this experiment
 % 
@@ -38,21 +30,20 @@ protocolParams.simulate.makePlots = true;
 %
 % Do not change the order of these directions without also fixing up
 % the Demo and Experimental programs, which are counting on this order.
-protocolParams.modulationNames = {'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  };
+%
+% The first trial type has its contrast set to 0 below, and is a blank
+% trial, despite the fact that you might think it involved a modulation.
+protocolParams.modulationNames = {'MaxContrast3sPulse' ...
+    'MaxContrast3sPulse' ...
+    'MaxContrast3sPulse' ...
+    'MaxContrast3sPulse' ...
+    };
                               
 protocolParams.directionNames = {...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
+    'MaxMel_600_80_667'...
+    'MaxMel_600_80_667'...
+    'MaxLMS_600_80_667'...
+    'LightFlux_540_380_50'...
     };
 
 % Flag as to whether to run the correction/validation at all for each direction.
@@ -66,10 +57,8 @@ protocolParams.directionNames = {...
 protocolParams.doCorrectionAndValidationFlag = {...
     true, ...
     false, ...
-    false,...
-    false, ...
-    false, ...
-    false, ...
+    true, ...
+    true, ...
     };
 
 % This is also related to directions.  This determines whether the
@@ -80,12 +69,10 @@ protocolParams.doCorrectionAndValidationFlag = {...
 % working with you don't need the extra precision provided by spectrum
 % correction.
 protocolParams.correctBySimulation = [...
-    true ...
-    true ...
-    true ...
-    true ...
-    true ...
-    true ...
+    false ...
+    false ...
+    false ...
+    false ...
     ];
 
 % Could add a validate by simulation flag here, if we ever get to a point
@@ -93,13 +80,13 @@ protocolParams.correctBySimulation = [...
 
 % Contrasts to use, relative to the powerLevel = 1 modulation in the
 % directions file.
+%
+% Setting a contrast to 0 provides a blank trial type.
 protocolParams.trialTypeParams = [...
-    struct('contrast',0.8) ...
-    struct('contrast',0.4) ...
-    struct('contrast',0.2) ...
-    struct('contrast',0.1) ...
-    struct('contrast',0.05) ...
-    struct('contrast',0.0) ...
+    struct('contrast',0) ...
+    struct('contrast',1) ...
+    struct('contrast',1) ...
+    struct('contrast',1) ...
     ];
 
 %% Field size and pupil size.
@@ -114,15 +101,15 @@ protocolParams.pupilDiameterMm = 8;
 %% Trial timing parameters.
 %
 % Trial duration - total time for each trial. 
-protocolParams.trialDuration = 12;
+protocolParams.trialDuration = 16;
 
 % There is a minimum time at the start of each trial where
 % the background is presented.  Then the actual trial
 % start time is chosen based on a random draw from
 % the jitter parameters.
-protocolParams.trialBackgroundTimeSec = 0;                 % Time background is on before stimulus can start
-protocolParams.trialMinJitterTimeSec = 0;                  % Minimum time after background Time before step
-protocolParams.trialMaxJitterTimeSec = 0;                  % Phase shifts in seconds
+protocolParams.trialBackgroundTimeSec = 0;
+protocolParams.trialMinJitterTimeSec = 1;                  % Time before step
+protocolParams.trialMaxJitterTimeSec = 3;                  % Phase shifts in seconds
 
 % Set ISI time in seconds
 protocolParams.isiTime = 0;                             
@@ -141,11 +128,12 @@ protocolParams.isiTime = 0;
 % or it is a minimum contrast decrement, etc.  Would have to worry about how 
 % to handle this if that assumption is not valid.
 protocolParams.attentionTask = true;
-protocolParams.attentionSegmentDuration = 12;
+protocolParams.attentionSegmentDuration = 16;
 protocolParams.attentionEventDuration = 0.5;
 protocolParams.attentionMarginDuration = 2;
-protocolParams.attentionEventProb = 2/3;
+protocolParams.attentionEventProb = 1;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
+protocolParams.attentionEligibleTrialTypes = [1];
 
 %% Set trial sequence
 %
@@ -160,10 +148,10 @@ protocolParams.calibrationType = 'BoxBRandomizedLongCableDStubby1_ND00';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTemperatureMeasurements = false;
 
-%% Validation parameters
+% Validation parameters
 protocolParams.nValidationsPerDirection = 2;
 
-%% Information we prompt for and related
+% Information we prompt for and related
 commandwindow;
 protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'HERO_xxxx');
 protocolParams.observerAgeInYrs = GetWithDefault('>> Enter <strong>observer age</strong>:', 32);
@@ -191,7 +179,7 @@ if (length(protocolParams.modulationNames) ~= length(protocolParams.directionNam
 end
 
 %% Open the OneLight
-ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
+ol = OneLight('simulate',protocolParams.simulate,'plotWhenSimulating',protocolParams.plotWhenSimulating); drawnow;
 
 %% Let user get the radiometer set up
 radiometerPauseDuration = 0;
@@ -209,6 +197,11 @@ pause(radiometerPauseDuration);
 protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 
 %% Make the corrected modulation primaries
+%
+% Could add check to OLMakeDirectionCorrectedPrimaries that pupil and field size match
+% in the direction parameters and as specified in protocol params here, if the former
+% are part of the direction. Might have to pass protocol params down into the called
+% routine. Could also do this in other routines below, I think.
 OLMakeDirectionCorrectedPrimaries(ol,protocolParams,'verbose',protocolParams.verbose);
 
 % This routine is mainly to debug the correction procedure, not particularly
@@ -227,7 +220,7 @@ OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
 %
 % Part of a protocol is the desired number of scans.  Calling the Experiment routine
 % is for one scan.
-ModulationTrialSequenceMR.Experiment(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
+ModulationTrialSequenceMR.Experiment(ol,protocolParams,'scanNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up
 ol.setAll(true);
