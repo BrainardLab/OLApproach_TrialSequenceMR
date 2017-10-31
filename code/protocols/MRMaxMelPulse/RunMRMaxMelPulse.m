@@ -21,8 +21,8 @@ protocolParams.protocol = 'MRMaxMelPulse';
 protocolParams.protocolOutputName = 'MMP';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate = true;
-protocolParams.plotWhenSimulating = true;
+protocolParams.simulate.oneLight = true;
+protocolParams.simulate.makePlots = true;
 
 %% Modulations used in this experiment
 % 
@@ -179,7 +179,7 @@ if (length(protocolParams.modulationNames) ~= length(protocolParams.directionNam
 end
 
 %% Open the OneLight
-ol = OneLight('simulate',protocolParams.simulate,'plotWhenSimulating',protocolParams.plotWhenSimulating); drawnow;
+ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
 
 %% Let user get the radiometer set up
 radiometerPauseDuration = 0;
