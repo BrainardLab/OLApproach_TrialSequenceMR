@@ -50,11 +50,11 @@ for trial = 1:protocolParams.nTrials
     % st up independently for each segment.
     if block(trial).attentionTask.flag
         % Figure out how many segments there are per trial
-        nSegments = block(trial).modulationData.modulationParams.stimulusDuration/protocolParams.attentionSegmentDuration;
+        nSegments = block(trial).modulationData.protocolParams.trialDuration/protocolParams.attentionSegmentDuration;
         if (nSegments ~= round(nSegments))
             error('attentionSegmentDuration must evenly divide trial duration');
         end     
-        segmentDuration = block(trial).modulationData.modulationParams.stimulusDuration/nSegments;
+        segmentDuration = block(trial).modulationData.protocolParams.trialDuration/nSegments;
         
         % As far as we can tell, the code below was not written to handle the case where there was
         % more than one segment per trial.  One would have to think through indexing from the segment
