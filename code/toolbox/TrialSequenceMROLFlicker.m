@@ -4,7 +4,7 @@ function [keyEvents, t, counter] = TrialSequenceMROLFlicker(ol, block, trial, fr
 % This is the function that sends the starts and stops to the OL
 %
 % Syntax:
-% keyPress = ModulationTrialSequenceFlickerStartsStops(trial, frameDurationSecs, numIterations)
+% [keyEvents, t, counter] = TrialSequenceMROLFlicker(ol, block, trial, frameDurationSecs, numIterations)
 %
 % Description:
 % Flickers the OneLight using the passed stops matrix until a key is

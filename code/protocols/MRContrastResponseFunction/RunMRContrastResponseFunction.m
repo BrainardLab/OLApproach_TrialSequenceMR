@@ -20,7 +20,7 @@ protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate = true;
+protocolParams.simulate = false;
 
 % Modulations used in this experiment
 % 
