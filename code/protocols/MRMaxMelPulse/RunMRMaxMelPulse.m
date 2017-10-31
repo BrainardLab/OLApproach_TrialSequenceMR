@@ -139,7 +139,8 @@ protocolParams.attentionEligibleTrialTypes = [1];
 %
 % Modulation and direction indices match on each trial, so we just specify
 % them once in a single array.
-protocolParams.trialTypeOrder = [randperm(6),randperm(6),randperm(6),randperm(6)];
+nTrialTypes = length(protocolParams.modulationNames);
+protocolParams.trialTypeOrder = [randperm(nTrialTypes),randperm(nTrialTypes),randperm(nTrialTypes),randperm(nTrialTypes)];
 protocolParams.nTrials = length(protocolParams.trialTypeOrder);
       
 %% OneLight parameters
@@ -220,7 +221,7 @@ OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
 %
 % Part of a protocol is the desired number of scans.  Calling the Experiment routine
 % is for one scan.
-ModulationTrialSequenceMR.Experiment(ol,protocolParams,'scanNumber',[],'verbose',protocolParams.verbose);
+ApproachEngine(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up
 ol.setAll(true);
