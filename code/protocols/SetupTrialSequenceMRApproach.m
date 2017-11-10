@@ -9,6 +9,12 @@
 
 %% Parameters
 %
+% The way the underlying code is written, it would be very bad if the name
+% of a field in the approachParams struct was the same as the names of any
+% of the fields in the background or direction structs that get read from
+% the dictionaries.  Be careful not to chose any parameter names that have
+% this bad feature.
+%
 % Who we are
 approachParams.approach = 'OLApproach_TrialSequenceMR';
 
