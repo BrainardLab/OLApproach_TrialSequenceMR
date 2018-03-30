@@ -20,12 +20,8 @@ protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
-<<<<<<< HEAD:code/protocols/MRContrastResponseFunction/RunMRContrastResponseFunction.m
-protocolParams.simulate = false;
-=======
 protocolParams.simulate.oneLight = true;
 protocolParams.simulate.makePlots = true;
->>>>>>> 904b3e886ce8ea082842ab8eff15cfbe2d0a8dde:code/RunMRContrastResponseFunction.m
 
 % Unusued params in this approach
 % protocolParams.simulate.observer = true;
@@ -207,6 +203,26 @@ pause(radiometerPauseDuration);
 % The call to OLSessionLog sets up info in protocolParams for where
 % the logs go.
 protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
+
+%% HERE WE NEED TO MAKE JUST THE NOMINAL BACKGROUNDS AND
+% DIRECTIONS THAT WE ARE ABOUT TO USE, AND STORE IN APPROPRIATE
+% DATA DIRECTORY.
+%
+% %%  Make the backgrounds
+%     tempApproachParams= approachParams;
+%     tempApproachParams.calibrationType = approachParams.calibrationTypes{cc};  
+%     OLMakeBackgroundNominalPrimaries(tempApproachParams);
+% 
+% %%  Make the directions
+%     tempApproachParams = approachParams;
+%     tempApproachParams.calibrationType = approachParams.calibrationTypes{cc};  
+%     OLMakeDirectionNominalPrimaries(tempApproachParams,'verbose',false);
+%
+% MAYBE SOMETHING LIKE THIS (FROM PSYCHOPHYSICS PROTOCOL)
+% melDirectionParams = OLDirectionParamsFromName('MaxMel_unipolar_275_80_667');
+% melDirectionParams.primaryHeadRoom = .01;
+% [MelDirection, background] = OLDirectionNominalFromParams(melDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
+% MelDirection = .75 .* MelDirection; % scale to 300% contrast
 
 %% Make the corrected modulation primaries
 OLMakeDirectionCorrectedPrimaries(ol,protocolParams,'verbose',protocolParams.verbose);
