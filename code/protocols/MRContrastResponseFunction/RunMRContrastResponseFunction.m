@@ -22,70 +22,7 @@ protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = true;
 protocolParams.simulate.makePlots = true;
-
-% Unusued params in this approach
-% protocolParams.simulate.observer = true;
-% protocolParams.simulate.operator = true;
-
-
-%% Modulations used in this experiment
-% 
-% The set of arrays in this cell should have the same length, the entries get paired.
-%
-% Do not change the order of these directions without also fixing up
-% the Demo and Experimental programs, which are counting on this order.
-protocolParams.modulationNames = {'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  'MaxContrast12sSinusoid' ...
-                                  };
-                              
-protocolParams.directionNames = {...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    'LightFlux_330_330_20'...
-    };
-
-% Flag as to whether to run the correction/validation at all for each direction.
-% You set to true here entries for the unique directions, so as not
-% to re-correct the same file more than once. This saves time.
-%
-% Note that, for obscure and boring reasons, the first entry in this cell array
-% needs to be true.  That should never be a problem, because we always want to
-% validate each direction once and only once, and it is as easy to validate the
-% first occurrance of a direction as a subsequent one.
-protocolParams.doCorrectionAndValidationFlag = {...
-    true, ...
-    false, ...
-    false,...
-    false, ...
-    false, ...
-    false, ...
-    };
-
-% This is also related to directions.  This determines whether the
-% correction gets done using the radiometer (set to false) or just by
-% simulation (set to true, just uses nominal spectra on each iteration of
-% the correction.) Usually you will want all of these to be false, unless
-% you've determined that for the particular box and directions you're
-% working with you don't need the extra precision provided by spectrum
-% correction.
-protocolParams.correctBySimulation = [...
-    true ...
-    true ...
-    true ...
-    true ...
-    true ...
-    true ...
-    ];
-
-% Could add a validate by simulation flag here, if we ever get to a point
-% where we want to trust the nominal spectra.
+protocolParams.simulate.radiometer = true;
 
 % Contrasts to use, relative to the powerLevel = 1 modulation in the
 % directions file.
@@ -109,7 +46,7 @@ protocolParams.pupilDiameterMm = 8;
 
 %% Trial timing parameters.
 %
-% Trial duration - total time for each trial. 
+% Trial duration - total time for each trial.
 protocolParams.trialDuration = 12;
 
 % There is a minimum time at the start of each trial where
@@ -121,7 +58,7 @@ protocolParams.trialMinJitterTimeSec = 0;                  % Minimum time after 
 protocolParams.trialMaxJitterTimeSec = 0;                  % Phase shifts in seconds
 
 % Set ISI time in seconds
-protocolParams.isiTime = 0;                             
+protocolParams.isiTime = 0;
 
 %% Attention task parameters
 %
@@ -132,9 +69,9 @@ protocolParams.isiTime = 0;
 % set and by generalizing the way attention event information is generated
 % within routine InitializeBlockStructArray.
 %
-% Also note that we assume that the dimming is visible when presented at 
+% Also note that we assume that the dimming is visible when presented at
 % any moment within any trial, even if the contrast is zero on that trial
-% or it is a minimum contrast decrement, etc.  Would have to worry about how 
+% or it is a minimum contrast decrement, etc.  Would have to worry about how
 % to handle this if that assumption is not valid.
 protocolParams.attentionTask = true;
 protocolParams.attentionSegmentDuration = 12;
@@ -145,58 +82,50 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% Set trial sequence
 %
+% RECODE THIS SO IT WORKS BETTER!!!!!!!!!!!!!!!!!
+%
 % Modulation and direction indices match on each trial, so we just specify
 % them once in a single array.
 protocolParams.trialTypeOrder = [randperm(6),randperm(6),randperm(6),randperm(6)];
 protocolParams.nTrials = length(protocolParams.trialTypeOrder);
-      
+
 %% OneLight parameters
-protocolParams.boxName = 'BoxB';  
+protocolParams.boxName = 'BoxB';
 protocolParams.calibrationType = 'BoxBRandomizedLongCableDStubby1_ND00';
-protocolParams.takeCalStateMeasurements = true;
-protocolParams.takeTemperatureMeasurements = false;
+protocolParams.takeCalStateMeasurements = true;        % ask david about this
 
 %% Validation parameters
-protocolParams.nValidationsPerDirection = 2;
+protocolParams.nValidationsPerDirection = 2; % talk to david about this
 
 %% Information we prompt for and related
 commandwindow;
 protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'HERO_xxxx');
-protocolParams.observerAgeInYrs = GetWithDefault('>> Enter <strong>observer age</strong>:', 32);
+protocolParams.observerAge = GetWithDefault('>> Enter <strong>observer age</strong>:', 32);
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
-
-%% Use these to test reporting on validation and spectrum seeking
-%
-% Spectrum Seeking: /MELA_data/Experiments/OLApproach_Psychophysics/DirectionCorrectedPrimaries/Jimbo/081117/session_1/...
-% Validation: /MELA_data/Experiments/OLApproach_Psychophysics/DirectionValidationFiles/Jimbo/081117/session_1/...
-% protocolParams.observerID = 'tired';
-% protocolParams.observerAgeInYrs = 32;
-% protocolParams.todayDate = '2017-09-01';
-% protocolParams.sessionName = 'session_1';
-% protocolParams.sessionLogDir = '/Users1/Dropbox (Aguirre-Brainard Lab)/MELA_data/Experiments/OLApproach_TrialSequenceMR/MRContrastResponseFunction/SessionRecords/michael/2017-09-01/session_1';
-% protocolParams.fullFileName = '/Users1/Dropbox (Aguirre-Brainard Lab)/MELA_data/Experiments/OLApproach_TrialSequenceMR/MRContrastResponseFunction/SessionRecords/michael/2017-09-01/session_1/david_session_1.log';
 
 %% Check that prefs are as expected, as well as some parameter sanity checks/adjustments
 if (~strcmp(getpref('OneLightToolbox','OneLightCalData'),getpref(protocolParams.approach,'OneLightCalDataPath')))
     error('Calibration file prefs not set up as expected for an approach');
 end
 
-% Sanity check on modulations
-if (length(protocolParams.modulationNames) ~= length(protocolParams.directionNames))
-    error('Modulation and direction names cell arrays must have same length');
-end
+calibration = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType);
 
 %% Open the OneLight
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
 
 %% Let user get the radiometer set up
-radiometerPauseDuration = 0;
-ol.setAll(true);
-commandwindow;
-fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
-input('');
-ol.setAll(false);
-pause(radiometerPauseDuration);
+if protocolParams.simulate.radiometer
+    radiometer = [];
+else
+    radiometerPauseDuration = 0;
+    ol.setAll(true);
+    commandwindow;
+    fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
+    input('');
+    ol.setAll(false);
+    pause(radiometerPauseDuration);
+    radiometer = OLOpenSpectroRadiometerObj('PR-670');
+end
 
 %% Open the session
 %
@@ -206,38 +135,31 @@ protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 
 %% HERE WE NEED TO MAKE JUST THE NOMINAL BACKGROUNDS AND
 % DIRECTIONS THAT WE ARE ABOUT TO USE, AND STORE IN APPROPRIATE
-% DATA DIRECTORY.
+% DATA DIRECTORY. 
 %
-% %%  Make the backgrounds
-%     tempApproachParams= approachParams;
-%     tempApproachParams.calibrationType = approachParams.calibrationTypes{cc};  
-%     OLMakeBackgroundNominalPrimaries(tempApproachParams);
-% 
-% %%  Make the directions
-%     tempApproachParams = approachParams;
-%     tempApproachParams.calibrationType = approachParams.calibrationTypes{cc};  
-%     OLMakeDirectionNominalPrimaries(tempApproachParams,'verbose',false);
-%
-% MAYBE SOMETHING LIKE THIS (FROM PSYCHOPHYSICS PROTOCOL)
-% melDirectionParams = OLDirectionParamsFromName('MaxMel_unipolar_275_80_667');
-% melDirectionParams.primaryHeadRoom = .01;
-% [MelDirection, background] = OLDirectionNominalFromParams(melDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
-% MelDirection = .75 .* MelDirection; % scale to 300% contrast
 
-%% Make the corrected modulation primaries
-OLMakeDirectionCorrectedPrimaries(ol,protocolParams,'verbose',protocolParams.verbose);
+lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_bipolar_275_60_667');
+lmsDirectionParams.primaryHeadRoom = .00;
+[lmsDirection, background] = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 
-% This routine is mainly to debug the correction procedure, not particularly
-% useful once things are humming along.  One would use it if the validations
-% are coming out badly and it was necessary to track things down.
-% OLCheckPrimaryCorrection(protocolParams);
 
-%% Make the modulation starts and stops
-OLMakeModulationStartsStops(protocolParams.modulationNames,protocolParams.directionNames, protocolParams,'verbose',protocolParams.verbose);
+%% Validations
+receptors = lmsDirection.describe.directionParams.T_receptors;
+OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors);
 
-%% Validate direction corrected primaries prior to experiemnt
-OLValidateDirectionCorrectedPrimaries(ol,protocolParams,'Pre');
-OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
+%% Corrections will go here at some point 
+%validate after?
+
+%% Make modulations
+% make pulse for my experiment 
+pulseParams = OLWaveformParamsFromName('MaxContrastSinusoid');
+pulseParams.frequency = 8;
+pulseParams.stimulusDuration = 10;
+pulseParams.timeStep = 1/100;
+[waveforms,timestep]=OLWaveformFromParams(pulseParams); 
+modulation = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
+
+
 
 %% Run experiment
 %
@@ -246,13 +168,16 @@ OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Pre');
 ModulationTrialSequenceMR.Experiment(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up
-ol.setAll(true);
-commandwindow;
-fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
-input('');
-ol.setAll(false);
-pause(radiometerPauseDuration);
+if protocolParams.simulate.radiometer
+    radiometer = [];
+else
+    radiometerPauseDuration = 0;
+    ol.setAll(true);
+    commandwindow;
+    fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
+    input('');
+    ol.setAll(false);
+    pause(radiometerPauseDuration);
+    radiometer = OLOpenSpectroRadiometerObj('PR-670');
+end
 
-%% Validate direction corrected primaries post experiment
-OLValidateDirectionCorrectedPrimaries(ol,protocolParams,'Post');
-OLAnalyzeDirectionCorrectedPrimaries(protocolParams,'Post');
