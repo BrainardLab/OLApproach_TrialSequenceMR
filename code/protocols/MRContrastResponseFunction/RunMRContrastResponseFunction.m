@@ -154,18 +154,19 @@ OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors
 % make pulse for my experiment 
 pulseParams = OLWaveformParamsFromName('MaxContrastSinusoid');
 pulseParams.frequency = 8;
-pulseParams.stimulusDuration = 10;
+pulseParams.stimulusDuration = 12; % in sec
 pulseParams.timeStep = 1/100;
 [waveforms,timestep]=OLWaveformFromParams(pulseParams); 
 modulation = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
 
+m
 
 
 %% Run experiment
 %
 % Part of a protocol is the desired number of scans.  Calling the Experiment routine
 % is for one scan.
-ModulationTrialSequenceMR.Experiment(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
+Experiment(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up
 if protocolParams.simulate.radiometer
