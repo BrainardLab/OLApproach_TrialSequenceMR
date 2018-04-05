@@ -37,7 +37,7 @@ protocolParams.simulate.radiometer = true;
 % makes the modulations for each trial type.
 %
 % At present, we're just varying contrast for one direction.
-trialTypeParams.contrastLevels = [0.8, 0.6, 0.4, 0.2, 0.1, 0.05, 0.0];
+trialTypeParams.contrastLevels = [0.8, 0.4, 0.2, 0.1, 0.05, 0.0];
 
 % Number of trials
 %
@@ -166,6 +166,7 @@ lmsDirectionParams.primaryHeadRoom = .00;
 %          validation struct from the object, or by taking it as an output
 %          argument from OLValidateDirection.]
 % [* NOTE: Add loop here for number of validations]
+
 receptors = lmsDirection.describe.directionParams.T_receptors;
 preCorrectionValidation = OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 
@@ -187,10 +188,14 @@ pulseParams.timeStep = 1/100;
 % This is code that has to understand about what is in the trialTypes
 % structure.  ApproachEngine doesn't need to know, because here we produce
 % primary values versus time (aka modulations).
-for ii = 1:length(protocolParams.contrastLevels)
-    lmsDirectionScaled = trialTypes.contrastLevels(ii) .* lmsDirection;
+for ii = 1:length(trialTypeParams.contrastLevels)
+    lmsDirectionScaled = trialTypeParams.contrastLevels(ii) .* lmsDirection;
     modulationsCellArray{ii} = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
 end
+
+%% Get the background starts and stops
+index = length(modulationsCellArray) + 1;
+[modulationsCellArray{index}.backgroundStarts, modulationsCellArray{index}.backgroundStops] = OLPrimaryToStartsStops(background.differentialPrimaryValues,background.calibration);
 
 %% Run experiment
 %

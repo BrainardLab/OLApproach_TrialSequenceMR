@@ -62,7 +62,7 @@ protocolParams = OLSessionLog(protocolParams,'Experiment','StartEnd','start');
 % Get path and filenames.  Check that someone has not
 % done something unexpected in the calling program.
 modulationDir = fullfile(getpref(protocolParams.protocol, 'ModulationStartsStopsBasePath'), protocolParams.observerID,protocolParams.todayDate,protocolParams.sessionName);
-for mm = 1:length(protocolParams.modulationNames)
+
     fullModulationNames = sprintf('ModulationStartsStops_%s_%s', protocolParams.modulationNames{mm}, protocolParams.directionNames{mm});
     fullModulationNames = strcat(fullModulationNames, sprintf('_trialType_%s',num2str(mm)));
     pathToModFile = [fullModulationNames '.mat'];
@@ -70,7 +70,7 @@ for mm = 1:length(protocolParams.modulationNames)
     modulationData(mm)= modulationRead.modulationData;
     modulation{mm} = modulationData(mm).modulation;
     frameDuration(mm) = modulationData(mm).modulationParams.timeStep;
-end
+
 
 %% Put together the block struct array.
 %
