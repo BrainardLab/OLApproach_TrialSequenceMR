@@ -26,14 +26,7 @@ protocolParams.simulate.radiometer = true;
 
 % Contrasts to use, relative to the powerLevel = 1 modulation in the
 % directions file.
-protocolParams.trialTypeParams = [...
-    struct('contrast',0.8) ...
-    struct('contrast',0.4) ...
-    struct('contrast',0.2) ...
-    struct('contrast',0.1) ...
-    struct('contrast',0.05) ...
-    struct('contrast',0.0) ...
-    ];
+protocolParams.contrastLevels = [0.8, 0.6, 0.4, 0.2, 0.1, 0.05, 0.0];
 
 %% Field size and pupil size.
 %
@@ -157,10 +150,13 @@ pulseParams.frequency = 8;
 pulseParams.stimulusDuration = 12; % in sec
 pulseParams.timeStep = 1/100;
 [waveforms,timestep]=OLWaveformFromParams(pulseParams); 
-modulation = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
 
-m
+% prepare modulations for each contrast level
 
+for ii = 1:length(protocolParams.contrastLevels)
+    lmsDirectionScaled = protocolParams.contrastLevels(ii) .* lmsDirection;
+    modulation{ii} = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
+end
 
 %% Run experiment
 %
