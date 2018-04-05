@@ -150,19 +150,28 @@ lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_bipolar_275_60_667');
 lmsDirectionParams.primaryHeadRoom = .00;
 [lmsDirection, background] = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 
-%% Corrections will go here at some point 
-%
-% [* NOTE: DHB, MB: Add the call to the correction code here, which you should be
-%          able to find in some other protocol or get from Joris or Harry.]
-
-%% Validations
+%% Validate pre-correction
 % [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
 %          straight? b) What is the idea about how we store this aspect of
 %          the data.  Just write out the direciton and background objects
-%          at this stage?
+%          at this stage?]
+% [* NOTE: JV: Reply: a) I've added the kwarg 'label', which can take any
+%          string/charvector as label. I've named these 'pre-correction'
+%          and 'post-correction'. The validation struct also stores the
+%          actual (differential) primary values that it validated, so
+%          that's another way to check whether validation is pre/post
+%          correction.
+%          b) Saving out the direction and background objects will save out
+%          the validations stored in them as well. You can also extract the
+%          validation struct from the object, or by taking it as an output
+%          argument from OLValidateDirection.]
 % [* NOTE: Add loop here for number of validations]
 receptors = lmsDirection.describe.directionParams.T_receptors;
-OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors);
+preCorrectionValidation = OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
+
+%% Correction direction, validate post correction
+OLCorrectDirection(lmsDirection,background,ol,radiometer);
+postCorrectionValidation = OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
 
 %% Make modulations
 % 
@@ -206,5 +215,4 @@ else
     pause(radiometerPauseDuration);
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
-OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors);
-
+OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
