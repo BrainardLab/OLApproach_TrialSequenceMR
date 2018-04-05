@@ -1,17 +1,20 @@
-function Experiment(ol,protocolParams,varargin)
-%%Experiment  Run a trial sequence MR protcol experiment.
+function ApproachEngine(ol,protocolParams,modulationsCellArray,varargin)
+% Run a trial sequence MR protcol experiment.
 %
 % Usage:
-%    Experiment(ol,protocolParams)
+%    ApproachEngine(ol,protocolParams)
 %
 % Description:
 %    Master program for running sequences of OneLight pulses/modulations in the scanner.
 %
-% Input:
+% Inputs:
 %    ol (object)              An open OneLight object.
 %    protocolParams (struct)  The protocol parameters structure.
+%    modulationsCellArray     Cell array of the modulations struct/object
+%                             that corresponds to each integer in the trial
+%                             sequence specification.
 %
-% Output:
+% Outputs:
 %    None.
 %
 % Optional key/value pairs:
@@ -37,6 +40,16 @@ if (isempty(p.Results.acquisitionNumber))
     protocolParams.acquisitionNumber = input('Enter acquisition (aka scan) number: ');
 else
     protocolParams.acquisitionNumber = p.Results.acquisitionNumber;
+end
+
+%% Get trial order
+protocolParams.nRepeatsPerTrialType = protocolParams.nTrials/length(modulationsCellArray);
+if (floor(nRepeatsPerTrialType) ~= nRepeatsPerTrialType)
+    error('Number trials not integer multiple of number of trial types.');
+end
+protocolParams.trialTypeOrder = [];
+for ii = 1:nRepeatsPerTrialType
+    protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder randperm(length(modulationsCellArray))];
 end
     
 %% Start session log

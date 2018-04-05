@@ -5,9 +5,12 @@
 %   OLApproach_TrialSequenceMR approach, and then invoke each of the
 %   steps required to set up and run a session of the experiment.
 
-% 6/28/17  dhb  Added first history comment.
-%          dhb  Move params.photoreceptorClasses into the dictionaries.
-%          dhb  Move params.useAmbient into the dictionaries.
+% History:
+%  06/28/17  dhb  Added first history comment.
+%            dhb  Move params.photoreceptorClasses into the dictionaries.
+%            dhb  Move params.useAmbient into the dictionaries.
+%  04/05/18  dhb, mb  A lot of stuff happened that no one wrote here.  Now
+%                 starting up again.
 
 %% Clear
 clear; close all;
@@ -18,15 +21,28 @@ clear; close all;
 protocolParams.approach = 'OLApproach_TrialSequenceMR';
 protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
-protocolParams.emailRecipient = 'jryan@mail.med.upenn.edu';
+protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = true;
 protocolParams.simulate.makePlots = true;
 protocolParams.simulate.radiometer = true;
 
-% Contrasts to use, relative to the powerLevel = 1 modulation in the
-% directions file.
-protocolParams.contrastLevels = [0.8, 0.6, 0.4, 0.2, 0.1, 0.05, 0.0];
+% Trial type information.
+%
+% A set of arrays of the same length that paired up 
+% determine what primaries get generated for each
+% trial type.
+%
+% This specification needs to be matched up to the code below that
+% makes the modulations for each trial type.
+%
+% At present, we're just varying contrast for one direction.
+trialTypeParams.contrastLevels = [0.8, 0.6, 0.4, 0.2, 0.1, 0.05, 0.0];
+
+% Number of trials
+%
+% Should be an integer multiple of number of trial types
+protocolParams.nTrials = 24;
 
 %% Field size and pupil size.
 %
@@ -34,8 +50,12 @@ protocolParams.contrastLevels = [0.8, 0.6, 0.4, 0.2, 0.1, 0.05, 0.0];
 % (e.g. light flux) where they are not available in the direction file.
 % They are checked for consistency with direction parameters that specify
 % these fields in OLAnalyzeDirectionCorrectedPrimaries.
-protocolParams.fieldSizeDegrees = 60;
-protocolParams.pupilDiameterMm = 8;
+% [* NOTE: DHB, MB: Need to fix up how these make it to validations.]
+% [* NOTE: DHB, MB: Someday want to pull these out of background and direction
+%    parameters altogether.]
+observerParams.fieldSizeDegrees = 60;
+observerParams.pupilDiameterMm = 8;
+protocolParams.observerParams = observerParams;
 
 %% Trial timing parameters.
 %
@@ -73,22 +93,16 @@ protocolParams.attentionMarginDuration = 2;
 protocolParams.attentionEventProb = 2/3;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 
-%% Set trial sequence
-%
-% RECODE THIS SO IT WORKS BETTER!!!!!!!!!!!!!!!!!
-%
-% Modulation and direction indices match on each trial, so we just specify
-% them once in a single array.
-protocolParams.trialTypeOrder = [randperm(6),randperm(6),randperm(6),randperm(6)];
-protocolParams.nTrials = length(protocolParams.trialTypeOrder);
-
 %% OneLight parameters
-protocolParams.boxName = 'BoxB';
+protocolParams.boxName = 'BoxD';
 protocolParams.calibrationType = 'BoxBRandomizedLongCableDStubby1_ND00';
-protocolParams.takeCalStateMeasurements = true;        % ask david about this
+protocolParams.takeCalStateMeasurements = true;
+protocolParams.takeTempearatureMeasurements = true;
 
 %% Validation parameters
-protocolParams.nValidationsPerDirection = 2; % talk to david about this
+% [* NOTE: DHB, MB: Need a pre-reg document. We have a standard that we use
+%    with respect to validations.  Ask Harry for the language.]
+protocolParams.nValidationsPerDirection = 5;
 
 %% Information we prompt for and related
 commandwindow;
@@ -100,8 +114,17 @@ protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 if (~strcmp(getpref('OneLightToolbox','OneLightCalData'),getpref(protocolParams.approach,'OneLightCalDataPath')))
     error('Calibration file prefs not set up as expected for an approach');
 end
-
 calibration = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType);
+
+%% Open the session
+%
+% The call to OLSessionLog sets up info in protocolParams for where
+% the logs go.
+protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
+
+%% At this point, we have all the parameters for today.
+%
+% SAVE PARMETERS INTO Parameters DATA TREE
 
 %% Open the OneLight
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
@@ -120,51 +143,57 @@ else
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
 
-%% Open the session
-%
-% The call to OLSessionLog sets up info in protocolParams for where
-% the logs go.
-protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
-
-%% HERE WE NEED TO MAKE JUST THE NOMINAL BACKGROUNDS AND
-% DIRECTIONS THAT WE ARE ABOUT TO USE, AND STORE IN APPROPRIATE
-% DATA DIRECTORY. 
-%
-
+%% Make background and directions that we are about to use
+% 
+% SAVE THESE IN NominalPrimaries DATA TREE
 lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_bipolar_275_60_667');
 lmsDirectionParams.primaryHeadRoom = .00;
 [lmsDirection, background] = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 
+%% Corrections will go here at some point 
+%
+% [* NOTE: DHB, MB: Add the call to the correction code here, which you should be
+%          able to find in some other protocol or get from Joris or Harry.]
 
 %% Validations
+% [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
+%          straight? b) What is the idea about how we store this aspect of
+%          the data.  Just write out the direciton and background objects
+%          at this stage?
+% [* NOTE: Add loop here for number of validations]
 receptors = lmsDirection.describe.directionParams.T_receptors;
 OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors);
 
-%% Corrections will go here at some point 
-%validate after?
-
 %% Make modulations
-% make pulse for my experiment 
+% 
+% Make temporal waveform for my experiment 
 pulseParams = OLWaveformParamsFromName('MaxContrastSinusoid');
 pulseParams.frequency = 8;
 pulseParams.stimulusDuration = 12; % in sec
 pulseParams.timeStep = 1/100;
 [waveforms,timestep]=OLWaveformFromParams(pulseParams); 
 
-% prepare modulations for each contrast level
-
+%% Prepare modulations for each trial type
+%
+% This is code that has to understand about what is in the trialTypes
+% structure.  ApproachEngine doesn't need to know, because here we produce
+% primary values versus time (aka modulations).
 for ii = 1:length(protocolParams.contrastLevels)
-    lmsDirectionScaled = protocolParams.contrastLevels(ii) .* lmsDirection;
-    modulation{ii} = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
+    lmsDirectionScaled = trialTypes.contrastLevels(ii) .* lmsDirection;
+    modulationsCellArray{ii} = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
 end
 
 %% Run experiment
 %
 % Part of a protocol is the desired number of scans.  Calling the Experiment routine
 % is for one scan.
-Experiment(ol,protocolParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
-%% Let user get the radiometer set up
+% Set trial sequence.  Possibly it goes into Experiment.
+ApproachEngine(ol,protocolParams,modulationsCellArray,'acquisitionNumber',[],'verbose',protocolParams.verbose);
+
+%% Let user get the radiometer set up and do post-experiment validation
+%
+% Some sort of logging and ke
 if protocolParams.simulate.radiometer
     radiometer = [];
 else
@@ -177,4 +206,5 @@ else
     pause(radiometerPauseDuration);
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
+OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors);
 
