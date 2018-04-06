@@ -194,6 +194,8 @@ for ii = 1:length(trialTypeParams.contrastLevels)
 end
 
 %% Get the background starts and stops
+% the last entry need to to be a cell entry with the background starts and
+% stops
 index = length(modulationsCellArray) + 1;
 [modulationsCellArray{index}.backgroundStarts, modulationsCellArray{index}.backgroundStops] = OLPrimaryToStartsStops(background.differentialPrimaryValues,background.calibration);
 

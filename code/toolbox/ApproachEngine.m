@@ -68,8 +68,7 @@ modulationDir = fullfile(getpref(protocolParams.protocol, 'ModulationStartsStops
     pathToModFile = [fullModulationNames '.mat'];
     modulationRead = load(fullfile(modulationDir, pathToModFile));
     modulationData(mm)= modulationRead.modulationData;
-    modulation{mm} = modulationData(mm).modulation;
-    frameDuration(mm) = modulationData(mm).modulationParams.timeStep;
+\
 
 
 %% Put together the block struct array.
@@ -92,7 +91,7 @@ end
 %% Set the background
 %
 % Use the background for the first trial as the background to set.
-ol.setMirrors(block(1).modulationData.modulation.background.starts, block(1).modulationData.modulation.background.stops); 
+ol.setMirrors(modulationsCellArray(end).backgroundStarts, modulationsCellArray(end).backgroundStops); 
 
 %% Adapt to background
 %
