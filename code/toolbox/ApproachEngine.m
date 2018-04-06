@@ -90,7 +90,7 @@ if (p.Results.verbose), fprintf('\n* Creating keyboard listener\n'); end
 mglListener('init');
 
 %% Run the trial loop.
-responseStruct = TrialSequenceMRTrialLoop(protocolParams,block,ol,'verbose',p.Results.verbose);
+responseStruct = TrialSequenceMRTrialLoop(protocolParams,block,ol,modulationsCellArray,pulseParams,'verbose',p.Results.verbose);
 
 %% Turn off key listener
 mglListener('quit');

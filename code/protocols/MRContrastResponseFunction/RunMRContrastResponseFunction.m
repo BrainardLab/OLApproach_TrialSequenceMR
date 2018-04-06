@@ -178,9 +178,9 @@ postCorrectionValidation = OLValidateDirection(lmsDirection,background,ol,radiom
 % 
 % Make temporal waveform for my experiment 
 pulseParams = OLWaveformParamsFromName('MaxContrastSinusoid');
-pulseParams.frequency = 8;
+pulseParams.frequency = 2;
 pulseParams.stimulusDuration = 12; % in sec
-pulseParams.timeStep = 1/100;
+pulseParams.timeStep = 1/60;
 [waveforms,timestep]=OLWaveformFromParams(pulseParams); 
 
 %% Prepare modulations for each trial type

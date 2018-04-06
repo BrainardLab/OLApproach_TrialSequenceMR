@@ -1,4 +1,4 @@
-function responseStruct = TrialSequenceMRTrialLoop(protocolParams,block,ol,varargin)
+function responseStruct = TrialSequenceMRTrialLoop(protocolParams,block,ol,modulationsCellArray,pulseParams,varargin)
 %%TrialSequenceMRTrialLoop  Loop over trials, show stimuli and get responses.
 %
 % Usage:
@@ -60,16 +60,16 @@ if (protocolParams.verbose), fprintf('- Starting trials.\n'); end
 for trial = 1:protocolParams.nTrials
     % Announce trial
     if (protocolParams.verbose)
-        fprintf('* Start trial %i/%i - %s,\n', trial, protocolParams.nTrials, block(trial).modulationData.modulationParams.direction);
+        fprintf('* Start trial %i/%i - %i contrast,\n', trial, protocolParams.nTrials, protocolParams.trialTypeOrder(trial));
     end
     
     % Check that the timing checks out
-    assert(block(trial).modulationData.modulationParams.stimulusDuration + protocolParams.isiTime + protocolParams.trialMaxJitterTimeSec ...
+    assert(pulseParams.stimulusDuration + protocolParams.isiTime + protocolParams.trialMaxJitterTimeSec ...
        <= protocolParams.trialDuration, 'Stimulus time + max jitter + ISI time is greater than trial durration');
     
     % Start trial.  Stick in background
     events(trial).tTrialStart = mglGetSecs;
-    ol.setMirrors(block(trial).modulationData.modulation.background.starts, block(trial).modulationData.modulation.background.stops); 
+    ol.setMirrors(modulationsCellArray{end}.backgroundStarts, modulationsCellArray{end}.backgroundStops); 
 
     % Wait for ISI, including random jitter.
     %
@@ -86,14 +86,11 @@ for trial = 1:protocolParams.nTrials
     %
     % Record start/finish time as well as other informatoin as we go.
     events(trial).tStimulusStart = mglGetSecs;
-    [events(trial).buffer, events(trial).t,  events(trial).counter] = TrialSequenceMROLFlicker(ol, block, trial, block(trial).modulationData.modulationParams.timeStep, 1);
+    [events(trial).buffer, events(trial).t,  events(trial).counter] = TrialSequenceMROLFlicker(ol, block, trial, pulseParams.timeStep, 1);
     
     % Put background back up and record times and keypresses.
-    ol.setMirrors(block(trial).modulationData.modulation.background.starts, block(trial).modulationData.modulation.background.stops);
+    ol.setMirrors(modulationsCellArray{end}.backgroundStarts, modulationsCellArray{end}.backgroundStops); 
     events(trial).tStimulusEnd = mglGetSecs;
-    
-    % This just makes it easier for us to plot the waveform we think showed on this trial later on.
-    events(trial).powerLevels = block(trial).modulationData.modulation.powerLevels;
     
     % At end of trial, put background to be that trial's background.
     %
