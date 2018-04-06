@@ -205,7 +205,7 @@ index = length(modulationsCellArray) + 1;
 % is for one scan.
 
 % Set trial sequence.  Possibly it goes into Experiment.
-ApproachEngine(ol,protocolParams,modulationsCellArray,'acquisitionNumber',[],'verbose',protocolParams.verbose);
+ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
