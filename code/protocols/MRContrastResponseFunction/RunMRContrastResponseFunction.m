@@ -24,7 +24,7 @@ protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = true;
+protocolParams.simulate.makePlots = false;
 protocolParams.simulate.radiometer = true;
 
 % Trial type information.
