@@ -146,9 +146,9 @@ end
 %% Make background and directions that we are about to use
 % 
 % SAVE THESE IN NominalPrimaries DATA TREE
-lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_bipolar_275_60_667');
-lmsDirectionParams.primaryHeadRoom = .00;
-[lmsDirection, background] = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
+LightFluxDirectionParams = OLDirectionParamsFromName('LightFlux_450_450_18','alternateDictionaryFunc','OLDirectionParamsDictionary_MR');
+LightFluxDirectionParams.primaryHeadRoom = .00;
+[LightFluxDirection, background] = OLDirectionNominalFromParams(LightFluxDirectionParams, calibration,'alternateBackgroundDictionaryFunc','OLBackgroundParamsDictionary_MR');
 
 %% Validate pre-correction
 % [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
@@ -167,12 +167,16 @@ lmsDirectionParams.primaryHeadRoom = .00;
 %          argument from OLValidateDirection.]
 % [* NOTE: Add loop here for number of validations]
 
-receptors = lmsDirection.describe.directionParams.T_receptors;
-preCorrectionValidation = OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
+% Get some receptors, clunky but works
+LMSDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
+LMSDirection = OLDirectionNominalFromParams(LMSDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
+receptors = LMSDirection.describe.directionParams.T_receptors;
+
+preCorrectionValidation = OLValidateDirection(LightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 
 %% Correction direction, validate post correction
-OLCorrectDirection(lmsDirection,background,ol,radiometer);
-postCorrectionValidation = OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+OLCorrectDirection(LightFluxDirection,background,ol,radiometer);
+postCorrectionValidation = OLValidateDirection(LightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
 
 %% Make modulations
 % 
@@ -189,8 +193,8 @@ pulseParams.timeStep = 1/60;
 % structure.  ApproachEngine doesn't need to know, because here we produce
 % primary values versus time (aka modulations).
 for ii = 1:length(trialTypeParams.contrastLevels)
-    lmsDirectionScaled = trialTypeParams.contrastLevels(ii) .* lmsDirection;
-    modulationsCellArray{ii} = OLAssembleModulation([background, lmsDirection],[ones(size(waveforms)); waveforms]);
+    lmsDirectionScaled = trialTypeParams.contrastLevels(ii) .* LightFluxDirection;
+    modulationsCellArray{ii} = OLAssembleModulation([background, LightFluxDirection],[ones(size(waveforms)); waveforms]);
 end
 
 %% Get the background starts and stops
@@ -222,4 +226,4 @@ else
     pause(radiometerPauseDuration);
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
-OLValidateDirection(lmsDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
+OLValidateDirection(LightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
