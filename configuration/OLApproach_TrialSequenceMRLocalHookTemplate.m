@@ -71,6 +71,9 @@ setpref(theApproach,'DirectionNominalPrimariesPath',fullfile(getpref(theApproach
 
 %% Prefs for individual protocols
 for pp = 1:length(theProtocols)
+    
+    %[ *NOTE: MB: Can we get rid of some of these?]
+    
     setpref(theProtocols{pp},'DirectionCorrectedPrimariesBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'DirectionCorrectedPrimaries'));
     
     % Set the validation base path
@@ -84,6 +87,12 @@ for pp = 1:length(theProtocols)
     
     % Data files base path
     setpref(theProtocols{pp},'DataFilesBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'DataFiles'));
+    
+    % Data parameter base path
+    setpref(theProtocols{pp},'parameterFilesBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'Parameters'));
+    
+    % Data parameter base path
+    setpref(theProtocols{pp},'modulationsBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'Modulations'));
 end
 
 %% Set the default speak rate

@@ -42,7 +42,7 @@ trialTypeParams.contrastLevels = [0.8, 0.4, 0.2, 0.1, 0.05, 0.0];
 % Number of trials
 %
 % Should be an integer multiple of number of trial types
-protocolParams.nTrials = 24;
+protocolParams.nTrials = 6;
 
 %% Field size and pupil size.
 %
@@ -95,7 +95,7 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxD';
-protocolParams.calibrationType = 'BoxBRandomizedLongCableDStubby1_ND00';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableBEyePiece2_ND01';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
@@ -125,6 +125,13 @@ protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 %% At this point, we have all the parameters for today.
 %
 % SAVE PARMETERS INTO Parameters DATA TREE
+modulationSavePath = fullfile(getpref('MRContrastResponseFunction','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(modulationSavePath)
+    mkdir(modulationSavePath)                          
+end
+modulationSaveName = fullfile(modulationSavePath,'scanParamters.mat');
+save(modulationSaveName,'calibration','observerParams','protocolParams','trialTypeParams');
+
 
 %% Open the OneLight
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
@@ -174,9 +181,17 @@ receptors = LMSDirection.describe.directionParams.T_receptors;
 
 preCorrectionValidation = OLValidateDirection(LightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 
+
+
+
+
 %% Correction direction, validate post correction
 OLCorrectDirection(LightFluxDirection,background,ol,radiometer);
 postCorrectionValidation = OLValidateDirection(LightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+
+
+
+
 
 %% Make modulations
 % 
@@ -202,6 +217,16 @@ end
 % stops
 index = length(modulationsCellArray) + 1;
 [modulationsCellArray{index}.backgroundStarts, modulationsCellArray{index}.backgroundStops] = OLPrimaryToStartsStops(background.differentialPrimaryValues,background.calibration);
+
+%% Save modulations
+modulationSavePath = fullfile(getpref('MRContrastResponseFunction','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(modulationSavePath)
+    mkdir(modulationSavePath)                          
+end
+modulationSaveName = fullfile(modulationSavePath,'modulations.mat');
+save(modulationSaveName,'modulationsCellArray','pulseParams','protocolParams','lmsDirection');
+
+
 
 %% Run experiment
 %
