@@ -210,3 +210,10 @@ modulationSaveName = fullfile(nominalSavePath,'correctedPrimaries.mat');
 save(modulationSaveName,'lightFluxDirection','background');
 
 
+%% Close PR-670
+if exist('radiometer', 'var')
+   try
+       radiometer.shutDown
+   end
+end
+
