@@ -1,4 +1,7 @@
-% RunMRContrastResponseFunction
+function [protocolParams,trialTypeParams,lightFluxDirection,background, ol]  = setAndSaveParams()
+
+
+% setAndSaveParams
 %
 % Description:
 %   Define the parameters for the MRContrastResponseFunction protocol of the
@@ -6,11 +9,8 @@
 %   steps required to set up and run a session of the experiment.
 
 % History:
-%  06/28/17  dhb  Added first history comment.
-%            dhb  Move params.photoreceptorClasses into the dictionaries.
-%            dhb  Move params.useAmbient into the dictionaries.
-%  04/05/18  dhb, mb  A lot of stuff happened that no one wrote here.  Now
-%                 starting up again.
+%  06/28/17  mab  Attemting to split into scanner friendly funcitons.
+
 
 %% Clear
 clear; close all;
@@ -185,64 +185,3 @@ preCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,r
 %% Correction direction, validate post correction
 OLCorrectDirection(lightFluxDirection,background,ol,radiometer);
 postCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
-
-
-%% Make modulations
-% 
-% Make temporal waveform for my experiment 
-pulseParams = OLWaveformParamsFromName('MaxContrastSinusoid');
-pulseParams.frequency = 10;
-pulseParams.stimulusDuration = 12; % in sec
-pulseParams.timeStep = 1/100;
-[waveforms,timestep]=OLWaveformFromParams(pulseParams); 
-
-%% Prepare modulations for each trial type
-%
-% This is code that has to understand about what is in the trialTypes
-% structure.  ApproachEngine doesn't need to know, because here we produce
-% primary values versus time (aka modulations).
-for ii = 1:length(trialTypeParams.contrastLevels)
-    lmsDirectionScaled = trialTypeParams.contrastLevels(ii) .* lightFluxDirection;
-    modulationsCellArray{ii} = OLAssembleModulation([background, lightFluxDirection],[ones(size(waveforms)); waveforms]);
-end
-
-%% Get the background starts and stops
-% the last entry need to to be a cell entry with the background starts and
-% stops
-index = length(modulationsCellArray) + 1;
-[modulationsCellArray{index}.backgroundStarts, modulationsCellArray{index}.backgroundStops] = OLPrimaryToStartsStops(background.differentialPrimaryValues,background.calibration);
-
-%% Save modulations
-modulationSavePath = fullfile(getpref('MRContrastResponseFunction','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~exist(modulationSavePath)
-    mkdir(modulationSavePath)                          
-end
-modulationSaveName = fullfile(modulationSavePath,'modulations.mat');
-save(modulationSaveName,'modulationsCellArray','pulseParams','protocolParams','LMSDirection');
-
-
-
-%% Run experiment
-%
-% Part of a protocol is the desired number of scans.  Calling the Experiment routine
-% is for one scan.
-
-% Set trial sequence.  Possibly it goes into Experiment.
-ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
-
-%% Let user get the radiometer set up and do post-experiment validation
-%
-% Some sort of logging and ke
-if protocolParams.simulate.radiometer
-    radiometer = [];
-else
-    radiometerPauseDuration = 0;
-    ol.setAll(true);
-    commandwindow;
-    fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
-    input('');
-    ol.setAll(false);
-    pause(radiometerPauseDuration);
-    radiometer = OLOpenSpectroRadiometerObj('PR-670');
-end
-OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
