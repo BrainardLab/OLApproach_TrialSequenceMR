@@ -157,6 +157,15 @@ lightFluxDirectionParams = OLDirectionParamsFromName('LightFlux_450_450_18','alt
 lightFluxDirectionParams.primaryHeadRoom = .00;
 [lightFluxDirection, background] = OLDirectionNominalFromParams(lightFluxDirectionParams, calibration,'alternateBackgroundDictionaryFunc','OLBackgroundParamsDictionary_MR');
 
+%% Save Nominal Primaries: 
+nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(nominalSavePath)
+    mkdir(nominalSavePath)                          
+end
+modulationSaveName = fullfile(nominalSavePath,'nominalPrimaries.mat');
+save(modulationSaveName,'lightFluxDirection','background');
+
+
 %% Validate pre-correction
 % [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
 %          straight? b) What is the idea about how we store this aspect of
@@ -178,10 +187,19 @@ lightFluxDirectionParams.primaryHeadRoom = .00;
 lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
 lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 receptors = lmsDirection.describe.directionParams.T_receptors;
-
 preCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 
 
 %% Correction direction, validate post correction
 OLCorrectDirection(lightFluxDirection,background,ol,radiometer);
 postCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+
+%% Save Corrected Primaries: 
+nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(nominalSavePath)
+    mkdir(nominalSavePath)                          
+end
+modulationSaveName = fullfile(nominalSavePath,'correctedPrimaries.mat');
+save(modulationSaveName,'lightFluxDirection','background');
+
+

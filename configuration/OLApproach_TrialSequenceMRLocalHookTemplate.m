@@ -79,6 +79,9 @@ for pp = 1:length(theProtocols)
     % Set the validation base path
     setpref(theProtocols{pp},'DirectionCorrectedValidationBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'DirectionValidationFiles'));
     
+    % Set the nominal save base path
+    setpref(theProtocols{pp},'DirectioNominalBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'NominalPrimaries'));
+    
     % Modulation starts/stops files base path
     setpref(theProtocols{pp},'ModulationStartsStopsBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'ModulationsStartsStops'));
     

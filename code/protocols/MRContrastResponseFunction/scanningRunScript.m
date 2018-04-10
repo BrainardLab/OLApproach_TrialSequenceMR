@@ -11,3 +11,7 @@
 
 %% Run the experiment.
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
+
+%% Post-Experiemnt Validations. 
+numValidations = 5;
+postExpValidation(numValidations,protocolParams,ol,lightFluxDirection,background);
