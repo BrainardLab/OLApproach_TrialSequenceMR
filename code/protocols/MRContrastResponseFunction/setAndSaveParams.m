@@ -23,9 +23,9 @@ protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
+protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = false;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.radiometer = false;
 
 % Trial type information.
 %
@@ -37,7 +37,9 @@ protocolParams.simulate.radiometer = true;
 % makes the modulations for each trial type.
 %
 % At present, we're just varying contrast for one direction.
-trialTypeParams.contrastLevels = [0.8, 0.4, 0.2, 0.1, 0.05, 0.0];
+% Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
+% 5, 0]
+trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0]; 
 
 % Number of trials
 %
@@ -187,12 +189,17 @@ save(modulationSaveName,'lightFluxDirection','background');
 lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
 lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 receptors = lmsDirection.describe.directionParams.T_receptors;
-preCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 
+for ii = 1:protocolParams.nValidationsPerDirection
+    preCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
+end
 
 %% Correction direction, validate post correction
 OLCorrectDirection(lightFluxDirection,background,ol,radiometer);
-postCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+
+for jj = 1:protocolParams.nValidationsPerDirection
+    postCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+end
 
 %% Save Corrected Primaries: 
 nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);

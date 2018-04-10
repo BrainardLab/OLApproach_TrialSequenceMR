@@ -17,7 +17,7 @@ pulseParams.timeStep = 1/100;
 % primary values versus time (aka modulations).
 for ii = 1:length(trialTypeParams.contrastLevels)
     lmsDirectionScaled = trialTypeParams.contrastLevels(ii) .* lightFluxDirection;
-    modulationsCellArray{ii} = OLAssembleModulation([background, lightFluxDirection],[ones(size(waveforms)); waveforms]);
+    modulationsCellArray{ii} = OLAssembleModulation([background, lmsDirectionScaled],[ones(size(waveforms)); waveforms]);
 end
 
 %% Get the background starts and stops
