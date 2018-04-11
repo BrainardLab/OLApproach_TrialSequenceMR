@@ -21,12 +21,15 @@ function ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,varar
 %    verbose (logical)         true       Be chatty?
 %    playSound (logical)       false      Play a sound when the experiment is ready.
 %    acquisitionNumber (value) []         Acqusition (aka scan) number for output name
+%    acquisitionOrder (vector) []         preset trial order when you dont
+%                                         want random 
 
 %% Parse
 p = inputParser;
 p.addParameter('verbose',true,@islogical);
 p.addParameter('playSound',false,@islogical);
 p.addParameter('acquisitionNumber',[],@isnumeric);
+p.addParameter('acquisitionOrder',[],@isnumeric);
 p.parse(varargin{:});
 
 %% Where the data goes
@@ -44,15 +47,19 @@ end
 
 %% Get trial order
 
-nRepeatsPerTrialType = protocolParams.nTrials/(length(modulationsCellArray)-1); % the -1 is to exclude the bacground starts/stops from the calculation 
-if (floor(nRepeatsPerTrialType) ~= nRepeatsPerTrialType)
-    error('Number trials not integer multiple of number of trial types.');
+if isempty(p.Results.acquisitionOrder)
+    nRepeatsPerTrialType = protocolParams.nTrials/(length(modulationsCellArray)-1); % the -1 is to exclude the bacground starts/stops from the calculation
+    if (floor(nRepeatsPerTrialType) ~= nRepeatsPerTrialType)
+        error('Number trials not integer multiple of number of trial types.');
+    end
+    protocolParams.trialTypeOrder = [];
+    for ii = 1:nRepeatsPerTrialType
+        protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder randperm(length(modulationsCellArray)-1)];  % the -1 is to exclude the bacground starts/stops from the calculation
+    end
+else
+    protocolParams.trialTypeOrder = p.Results.acquisitionOrder;
 end
-protocolParams.trialTypeOrder = [];
-for ii = 1:nRepeatsPerTrialType
-    protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder randperm(length(modulationsCellArray)-1)];  % the -1 is to exclude the bacground starts/stops from the calculation 
-end
-    
+
 %% Start session log
 %
 % Add protocol output name and acquisition (scan) number
@@ -79,7 +86,7 @@ end
 %% Set the background
 %
 % Use the background for the first trial as the background to set.
-ol.setMirrors(modulationsCellArray{end}.backgroundStarts, modulationsCellArray{end}.backgroundStops); 
+ol.setMirrors(modulationsCellArray{end}.backgroundStarts, modulationsCellArray{end}.backgroundStops);
 
 %% Adapt to background
 %
@@ -99,10 +106,10 @@ mglListener('quit');
 %
 % Save protocolParams, block, responseStruct.
 % Make sure not to overwrite an existing file.
-outputFile = fullfile(savePath,[protocolParams.sessionName '_' protocolParams.protocolOutputName sprintf('_scan%d.mat',protocolParams.acquisitionNumber)]);
+outputFile = fullfile(savePath,[protocolParams.protocolOutputName,'_', protocolParams.sessionName sprintf('_scan%d.mat', protocolParams.acquisitionNumber)]);
 while (exist(outputFile,'file'))
     protocolParams.acquisitionNumber = input(sprintf('Output file %s exists, enter correct acquisition number: \n',outputFile));
-    outputFile = fullfile(savePath,[protocolParams.sessionName sprintf('_scan%d.mat',protocolParams.acquisitionNumber)]);
+    outputFile = fullfile(savePath,[protocolParams.protocolOutputName,'_' protocolParams.sessionName sprintf('_scan%d.mat', protocolParams.acquisitionNumber)]);
 end
 responseStruct.acquisitionNumber = protocolParams.acquisitionNumber;
 save(outputFile,'protocolParams', 'block', 'responseStruct');

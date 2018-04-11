@@ -57,10 +57,10 @@ end
 
 %% Do trials
 if (protocolParams.verbose), fprintf('- Starting trials.\n'); end
-for trial = 1:protocolParams.nTrials
+for trial = 1:length(protocolParams.trialTypeOrder)
     % Announce trial
     if (protocolParams.verbose)
-        fprintf('* Start trial %i/%i - %i contrast,\n', trial, protocolParams.nTrials, protocolParams.trialTypeOrder(trial));
+        fprintf('* Start trial %i/%i - %.2f contrast,\n', trial, length(protocolParams.trialTypeOrder), protocolParams.contrastLevels(protocolParams.trialTypeOrder(trial)));
     end
     
     % Check that the timing checks out

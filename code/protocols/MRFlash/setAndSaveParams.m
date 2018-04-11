@@ -23,9 +23,9 @@ protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
+protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = false;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.radiometer = false;
 
 % Trial type information.
 %
@@ -40,7 +40,7 @@ protocolParams.simulate.radiometer = true;
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
 trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0]; 
-protocolParams.contrastLevels = 0.8*trialTypeParams.contrastLevels;
+
 % Number of trials
 %
 % Should be an integer multiple of number of trial types
@@ -202,11 +202,11 @@ for jj = 1:protocolParams.nValidationsPerDirection
 end
 
 %% Save Corrected Primaries: 
-correctedSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~exist(correctedSavePath)
-    mkdir(correctedSavePath)                          
+nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(nominalSavePath)
+    mkdir(nominalSavePath)                          
 end
-modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
+modulationSaveName = fullfile(nominalSavePath,'correctedPrimaries.mat');
 save(modulationSaveName,'lightFluxDirection','background');
 
 

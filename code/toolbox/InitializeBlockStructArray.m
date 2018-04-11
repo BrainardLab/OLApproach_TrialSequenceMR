@@ -37,7 +37,7 @@ block = struct();
 % will be used for each trial.  Get out the starts/stops and insert attention
 % event as necessary.
 for trial = 1:length(protocolParams.trialTypeOrder)
-    fprintf('- Preconfiguring trial %i or %i...\n', trial, protocolParams.nTrials);
+    fprintf('- Preconfiguring trial %i or %i...\n', trial, length(protocolParams.trialTypeOrder));
     
     % Check if the 'attentionTask' flag is set. If it is, set up the task
     block(trial).attentionTask.flag = protocolParams.attentionTask;

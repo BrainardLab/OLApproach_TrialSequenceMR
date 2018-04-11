@@ -1,4 +1,4 @@
-
+clear
 %% Set up all the parameters and make Modulations
 % [ *NOTE: MB: I plan on making this a more robust function that will
 % better fit our needs by taking in multiple directions and key/value
