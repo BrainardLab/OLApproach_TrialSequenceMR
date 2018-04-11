@@ -29,7 +29,7 @@ ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',p
 %
 % create set trial order 
 protocolParams.contrastLevels = [1,0];
-acquisitionOrder = repmat([2 1],[1, 1]); % off then on 
+acquisitionOrder = repmat([2 1],[1, 14]); % off then on 
 protocolParams.protocolOutputName = 'Flash';
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',1,'verbose',protocolParams.verbose, 'acquisitionOrder', acquisitionOrder);
 

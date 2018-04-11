@@ -44,7 +44,7 @@ protocolParams.contrastLevels = 0.8*trialTypeParams.contrastLevels;
 % Number of trials
 %
 % Should be an integer multiple of number of trial types
-protocolParams.nTrials = 6;
+protocolParams.nTrials = 24;
 
 %% Field size and pupil size.
 %
@@ -190,16 +190,22 @@ lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
 lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 receptors = lmsDirection.describe.directionParams.T_receptors;
 
+fprintf('*\tStarting Valiadtion: pre-corrections\n');
 for ii = 1:protocolParams.nValidationsPerDirection
     preCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 end
+fprintf('*\tValiadtion Done: pre-corrections\n');
 
 %% Correction direction, validate post correction
+fprintf('*\tStarting Corrections\n');
 OLCorrectDirection(lightFluxDirection,background,ol,radiometer);
+fprintf('*\tCorrections Done\n');
 
+fprintf('*\tStarting Valiadtion: post-corrections\n');
 for jj = 1:protocolParams.nValidationsPerDirection
     postCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
 end
+fprintf('*\tValiadtion Done: post-corrections\n');
 
 %% Save Corrected Primaries: 
 correctedSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
