@@ -286,6 +286,28 @@ ConeDirectedBackground3 = ConeDirectedBackground;
     'background',ConeDirectedBackground3, ...
     'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
 
+%% Make direction 4, M cone isolating
+%
+% Only need to rewrite key parameters
+nDirections = nDirections+1;
+directions{nDirections} = 'ConeDirectedDirection4';
+
+% We say which cones we want at a target contrast in the whichReceptorsToIsolate field.
+% The otherclasses get their contrasts pegged at zero. The indices refer to
+% the order of cones specified above.
+%
+% Again, the contrast was chosen by hand.
+ConeDirectedParams4 = ConeDirectedParams;
+MDirectedContrast = 0.10;
+ConeDirectedParams4.modulationContrast = [MDirectedContrast MDirectedContrast];
+ConeDirectedParams4.whichReceptorsToIsolate = [2 5];
+ConeDirectedBackground4 = ConeDirectedBackground;
+[ConeDirectedDirection4] = OLDirectionNominalFromParams(ConeDirectedParams4, cal, ...
+    'observerAge',protocolParams.observerAge, ...
+    'background',ConeDirectedBackground3, ...
+    'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
+
+
 %% Report on nominal contrasts we obtained
 % Get receptor sensitivities used, so that we can get cone contrasts out below.
 receptorStrings = ConeDirectedDirection1.describe.directionParams.photoreceptorClasses;
