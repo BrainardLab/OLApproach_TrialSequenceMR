@@ -1,4 +1,4 @@
-function [protocolParams,trialTypeParams,lightFluxDirection,ConeDirectedBackground, ol]  = setAndSaveParams()
+function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol]  = setAndSaveParams()
 
 
 % setAndSaveParams
@@ -29,7 +29,7 @@ protocolParams.simulate.radiometer = true;
 
 % Trial type information.
 %
-% A set of arrays of the same length that paired up 
+% A set of arrays of the same length that paired up
 % determine what primaries get generated for each
 % trial type.
 %
@@ -39,7 +39,7 @@ protocolParams.simulate.radiometer = true;
 % At present, we're just varying contrast for one direction.
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
-trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0]; 
+trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
 protocolParams.contrastLevels = 0.8*trialTypeParams.contrastLevels;
 
 % Number of trials
@@ -164,7 +164,7 @@ protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 % SAVE PARMETERS INTO Parameters DATA TREE
 modulationSavePath = fullfile(getpref('MRContrastResponseFunction','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(modulationSavePath)
-    mkdir(modulationSavePath)                          
+    mkdir(modulationSavePath)
 end
 modulationSaveName = fullfile(modulationSavePath,'scanParamters.mat');
 save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams');
@@ -191,8 +191,8 @@ end
 % Get basic parameters.  These ask for essentially no contrast and have
 % very tight constraints on the desired chromaticity and luminance.
 ConeDirectedBackgroundParams = OLDirectionParamsFromName('ConeDirectedBackground', ...
-        'alternateDictionaryFunc', directionAlternateDictionary);
-    
+    'alternateDictionaryFunc', directionAlternateDictionary);
+
 % Make sure we are consistent about which XYZ functions we are using.
 ConeDirectedBackgroundParams.whichXYZ = whichXYZ;
 
@@ -211,7 +211,7 @@ ConeDirectedBackgroundParams.desiredLum = targetxyY(3);
 
 %% Get direction base parameters.
 %
-% These get tweaked for different directions. 
+% These get tweaked for different directions.
 ConeDirectedParams = OLDirectionParamsFromName('ConeDirected', ...
     'alternateDictionaryFunc', directionAlternateDictionary);
 ConeDirectedParams.photoreceptorClasses = {'LConeTabulatedAbsorbance','MConeTabulatedAbsorbance','SConeTabulatedAbsorbance','LConeTabulatedAbsorbance','MConeTabulatedAbsorbance','SConeTabulatedAbsorbance'};
@@ -304,7 +304,7 @@ ConeDirectedParams4.whichReceptorsToIsolate = [2 5];
 ConeDirectedBackground4 = ConeDirectedBackground;
 [ConeDirectedDirection4] = OLDirectionNominalFromParams(ConeDirectedParams4, cal, ...
     'observerAge',protocolParams.observerAge, ...
-    'background',ConeDirectedBackground3, ...
+    'background',ConeDirectedBackground4, ...
     'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
 
 
@@ -318,14 +318,14 @@ receptors = GetHumanPhotoreceptorSS(ConeDirectedDirection1.calibration.describe.
 for dd = 1:length(directions)
     % Hello for this direction
     fprintf('<strong>%s</strong>\n', directions{dd});
-
+    
     % Get contrasts. Code assumes matched naming of direction and background objects,
     % so that the string substitution works to get the background object
     % from the direction object.
     direction = eval(directions{dd});
     background = eval(strrep(directions{dd},'Direction','Background'));
-    [~, excitations, excitationDiffs] = direction.ToDesiredReceptorContrast(background,receptors);  
-      
+    [~, excitations, excitationDiffs] = direction.ToDesiredReceptorContrast(background,receptors);
+    
     % Grab the relevant contrast information from the OLDirection object an
     % and report. Keep pos and neg contrast explicitly separate. These
     % should match in magnitude but be flipped in sign.
@@ -341,10 +341,10 @@ for dd = 1:length(directions)
     fprintf('\n\n');
 end
 
-%% Save Nominal Primaries: 
+%% Save Nominal Primaries:
 nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
 % if ~exist(nominalSavePath)
-%     mkdir(nominalSavePath)                          
+%     mkdir(nominalSavePath)
 % end
 % modulationSaveName = fullfile(nominalSavePath,'nominalPrimaries.mat');
 % save(modulationSaveName,'colorDirection','ConeDirectedBackground');
@@ -366,36 +366,65 @@ nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominal
 %          argument from OLValidateDirection.]
 % [* NOTE: Add loop here for number of validations]
 
-fprintf('*\tStarting Valiadtion: pre-corrections\n');
-for ii = 1:protocolParams.nValidationsPerDirection
-    preCorrectionValidation = OLValidateDirection(colorDirection,ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
-end
-fprintf('*\tValiadtion Done: pre-corrections\n');
 
+fprintf('*\tStarting Valiadtion: pre-corrections\n');
+
+for jj = 1:length(directions)
+    switch directions{jj}
+        case 'ConeDirectedDirection1'
+            directionType = 'LminusM';
+        case 'ConeDirectedDirection2'
+            directionType = 'LplusM';
+        case 'ConeDirectedDirection3'
+            directionType = 'LIsolating';
+        case 'ConeDirectedDirection4'
+            directionType = 'MIsolating';
+    end
+    for ii = 1:protocolParams.nValidationsPerDirection
+        preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_pre-correction'));
+    end
+    fprintf('*\tValiadtion Done: pre-corrections\n');
+end
 %% Correction direction, validate post correction
 fprintf('*\tStarting Corrections\n');
-OLCorrectDirection(colorDirection,ConeDirectedBackground,ol,radiometer);
-fprintf('*\tCorrections Done\n');
+for qq = 1:length(directions)
+    OLCorrectDirection(eval(directions{qq}),ConeDirectedBackground,ol,radiometer);
+    fprintf('*\tCorrection Done\n');
+end
 
 fprintf('*\tStarting Valiadtion: post-corrections\n');
-for jj = 1:protocolParams.nValidationsPerDirection
-    postCorrectionValidation = OLValidateDirection(colorDirection,ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+for mm = 1:length(directions)
+    switch directions{mm}
+        case 'ConeDirectedDirection1'
+            directionType = 'LminusM';
+        case 'ConeDirectedDirection2'
+            directionType = 'LplusM';
+        case 'ConeDirectedDirection3'
+            directionType = 'LIsolating';
+        case 'ConeDirectedDirection4'
+            directionType = 'MIsolating';
+    end
+    for kk = 1:protocolParams.nValidationsPerDirection
+        postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_post-correction'));
+    end
 end
 fprintf('*\tValiadtion Done: post-corrections\n');
 
-%% Save Corrected Primaries: 
+ConeDirectedDirections = {ConeDirectedDirection1,ConeDirectedDirection2,ConeDirectedDirection3,ConeDirectedDirection4};
+
+%% Save Corrected Primaries:
 correctedSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(correctedSavePath)
-    mkdir(correctedSavePath)                          
+    mkdir(correctedSavePath)
 end
 modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
-save(modulationSaveName,'colorDirection','background');
+save(modulationSaveName,'ConeDirectedDirections','ConeDirectedBackground');
 
 
 %% Close PR-670
 if exist('radiometer', 'var')
-   try
-       radiometer.shutDown
-   end
+    try
+        radiometer.shutDown
+    end
 end
 
