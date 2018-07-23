@@ -39,10 +39,10 @@ dictionary = containers.Map();
 params = OLDirectionParams_LightFluxChrom;
 params.baseName = 'LightFlux';
 params.polarType = 'bipolar';
-params.lightFluxDesiredXY = [0.45,0.45];
-params.lightFluxDownFactor = 1.8;
+params.desiredxy = [0.45,0.45];
+params.desiredMaxContrast = 0.8;                                       
 params.name = OLDirectionNameFromParams(params);
-params.backgroundName = 'LightFlux_450_450_18';
+params.backgroundName = 'LightFlux_450_450_8';
 if OLDirectionParamsValidate(params)
     % All validations OK. Add entry to the dictionary.
     dictionary(params.name) = params;
