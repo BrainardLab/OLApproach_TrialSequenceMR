@@ -1,4 +1,4 @@
-function [protocolParams,trialTypeParams,lightFluxDirection,background, ol]  = setAndSaveParams()
+function [protocolParams,trialTypeParams,lightFluxDirection,ConeDirectedBackground, ol]  = setAndSaveParams()
 
 
 % setAndSaveParams
@@ -112,11 +112,45 @@ protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>'
 protocolParams.observerAge = GetWithDefault('>> Enter <strong>observer age</strong>:', 32);
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 
-%% Check that prefs are as expected, as well as some parameter sanity checks/adjustments
+%% Parameters
+%
+% We'll use the new CIE XYZ functions.  These should match what is in the
+% dictionary for the modulations.
+whichXYZ = 'xyzCIEPhys10';
+
+%% Define altnernate dictionary functions.
+backgroundAlternateDictionary = 'OLBackgroundParamsDictionary_Color';
+directionAlternateDictionary = 'OLDirectionParamsDictionary_Color';
+
+%% Set calibration structure for OneLight.
+% set up the calibrationStructure
+% Check that prefs are as expected, as well as some parameter sanity checks/adjustments
 if (~strcmp(getpref('OneLightToolbox','OneLightCalData'),getpref(protocolParams.approach,'OneLightCalDataPath')))
     error('Calibration file prefs not set up as expected for an approach');
 end
-calibration = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType);
+cal = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType,'CalibrationDate','latest');
+
+%% Direction counter
+nDirections = 0;
+
+%% Load cmfs
+eval(['tempXYZ = load(''T_' whichXYZ ''');']);
+eval(['T_xyz = SplineCmf(tempXYZ.S_' whichXYZ ',683*tempXYZ.T_' whichXYZ ',cal.describe.S);']);
+
+%% Hellow
+fprintf('<strong>%s</strong>, observer age %d\n',protocolParams.calibrationType, protocolParams.observerAge);
+
+%% Get native chromaticity for this cal
+nativeXYZ = T_xyz*OLPrimaryToSpd(cal,0.5*ones(size(cal.computed.pr650M,2),1));
+nativexyY = XYZToxyY(nativeXYZ);
+fprintf('\tDevice native half on xyY: %0.3f %0.3f %0.1f\n',nativexyY(1),nativexyY(2),nativexyY(3));
+
+%% Set target xyY for background.
+%
+% Here we use the native half one, but you can type in what you want.
+targetxyY = nativexyY;
+fprintf('\tUsing target background xyY: %0.3f %0.3f %0.01\n',targetxyY(1),targetxyY(2),targetxyY(3));
+
 
 %% Open the session
 %
@@ -132,7 +166,7 @@ if ~exist(modulationSavePath)
     mkdir(modulationSavePath)                          
 end
 modulationSaveName = fullfile(modulationSavePath,'scanParamters.mat');
-save(modulationSaveName,'calibration','observerParams','protocolParams','trialTypeParams');
+save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams');
 
 
 %% Open the OneLight
@@ -152,12 +186,29 @@ else
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
 
-%% Make background and directions that we are about to use
-% 
-% SAVE THESE IN NominalPrimaries DATA TREE
-lightFluxDirectionParams = OLDirectionParamsFromName('LightFlux_450_450_18','alternateDictionaryFunc','OLDirectionParamsDictionary_MR');
-lightFluxDirectionParams.primaryHeadRoom = .00;
-[lightFluxDirection, background] = OLDirectionNominalFromParams(lightFluxDirectionParams, calibration,'alternateBackgroundDictionaryFunc','OLBackgroundParamsDictionary_MR');
+%% Make a background of specified luminance and chromaticity
+%
+% Get basic parameters.  These ask for essentially no contrast and have
+% very tight constraints on the desired chromaticity and luminance.
+ConeDirectedBackgroundParams = OLDirectionParamsFromName('ConeDirectedBackground', ...
+        'alternateDictionaryFunc', directionAlternateDictionary);
+    
+% Make sure we are consistent about which XYZ functions we are using.
+ConeDirectedBackgroundParams.whichXYZ = whichXYZ;
+
+% Set desired background xyY
+ConeDirectedBackgroundParams.desiredxy = targetxyY(1:2);
+ConeDirectedBackgroundParams.desiredLum = targetxyY(3);
+
+% Get the background.  This also makes a light flux modulation, but we ignore that.
+[colorDirection, ConeDirectedBackground] = OLDirectionNominalFromParams(ConeDirectedBackgroundParams, cal, ...
+    'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
+
+%% Get base direction parameters.
+%
+% These get tweaked for different directions.
+ConeDirectedParams = OLDirectionParamsFromName('ConeDirected', ...
+    'alternateDictionaryFunc', directionAlternateDictionary);
 
 %% Save Nominal Primaries: 
 nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
@@ -165,8 +216,7 @@ if ~exist(nominalSavePath)
     mkdir(nominalSavePath)                          
 end
 modulationSaveName = fullfile(nominalSavePath,'nominalPrimaries.mat');
-save(modulationSaveName,'lightFluxDirection','background');
-
+save(modulationSaveName,'colorDirection','ConeDirectedBackground');
 
 %% Validate pre-correction
 % [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
@@ -187,23 +237,23 @@ save(modulationSaveName,'lightFluxDirection','background');
 
 % Get some receptors, clunky but works
 lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
-lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
+lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, cal, 'observerAge', protocolParams.observerAge);
 receptors = lmsDirection.describe.directionParams.T_receptors;
 
 fprintf('*\tStarting Valiadtion: pre-corrections\n');
 for ii = 1:protocolParams.nValidationsPerDirection
-    preCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
+    preCorrectionValidation = OLValidateDirection(colorDirection,ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', 'pre-correction');
 end
 fprintf('*\tValiadtion Done: pre-corrections\n');
 
 %% Correction direction, validate post correction
 fprintf('*\tStarting Corrections\n');
-OLCorrectDirection(lightFluxDirection,background,ol,radiometer);
+OLCorrectDirection(colorDirection,ConeDirectedBackground,ol,radiometer);
 fprintf('*\tCorrections Done\n');
 
 fprintf('*\tStarting Valiadtion: post-corrections\n');
 for jj = 1:protocolParams.nValidationsPerDirection
-    postCorrectionValidation = OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
+    postCorrectionValidation = OLValidateDirection(colorDirection,ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', 'post-correction');
 end
 fprintf('*\tValiadtion Done: post-corrections\n');
 
@@ -213,7 +263,7 @@ if ~exist(correctedSavePath)
     mkdir(correctedSavePath)                          
 end
 modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
-save(modulationSaveName,'lightFluxDirection','background');
+save(modulationSaveName,'colorDirection','background');
 
 
 %% Close PR-670
