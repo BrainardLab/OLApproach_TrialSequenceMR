@@ -43,13 +43,16 @@ switch userID
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_data/'];
     case {'dhb'}
         materialsBasePath = ['/Users1'  '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
-        dataBasePath = ['/Users1' '/Dropbox (Aguirre-Brainard Lab)/MELA_data/'];     
+        dataBasePath = ['/Users1' '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/']; 
+    case {'michael'}
+        materialsBasePath = ['/Users1'  '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
+        dataBasePath = ['/Users1' '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/'];
     case {'nicolas'}
         materialsBasePath = '/Volumes/Manta TM HD/Dropbox (Aguirre-Brainard Lab)/MELA_materials';
-        dataBasePath = '/Volumes/Manta TM HD/Dropbox (Aguirre-Brainard Lab)/MELA_data';
+        dataBasePath = '/Volumes/Manta TM HD/Dropbox (Aguirre-Brainard Lab)/MELA_datadev';
     otherwise
         materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
-        dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_data/'];
+        dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/'];
 end
 
 %% Set prefs for materials and data
