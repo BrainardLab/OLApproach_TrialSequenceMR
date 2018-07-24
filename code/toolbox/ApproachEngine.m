@@ -46,19 +46,22 @@ else
 end
 
 %% Get trial order
+directionOrder = repmat(randperm(size(modulationsCellArray,1)),6,1);
 
 if isempty(p.Results.acquisitionOrder)
-    nRepeatsPerTrialType = protocolParams.nTrials/(length(modulationsCellArray)-1); % the -1 is to exclude the bacground starts/stops from the calculation
+    nRepeatsPerTrialType = protocolParams.nTrials/(size(modulationsCellArray,2)-1); % the -1 is to exclude the bacground starts/stops from the calculation
     if (floor(nRepeatsPerTrialType) ~= nRepeatsPerTrialType)
         error('Number trials not integer multiple of number of trial types.');
     end
     protocolParams.trialTypeOrder = [];
     for ii = 1:nRepeatsPerTrialType
-        protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder randperm(length(modulationsCellArray)-1)];  % the -1 is to exclude the bacground starts/stops from the calculation
+        protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder randperm(size(modulationsCellArray,2)-1)];  % the -1 is to exclude the bacground starts/stops from the calculation
     end
 else
     protocolParams.trialTypeOrder = p.Results.acquisitionOrder;
 end
+
+protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder;directionOrder(:)'];
 
 %% Start session log
 %

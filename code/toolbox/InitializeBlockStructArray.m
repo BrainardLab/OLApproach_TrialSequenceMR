@@ -88,8 +88,8 @@ for trial = 1:length(protocolParams.trialTypeOrder)
             
             % add the starts and stops to the block struct from the
             % proper modualation cell indexed by contrast level 
-            block(trial).modulationData.modulation.starts = modulationsCellArray{protocolParams.trialTypeOrder(trial)}.starts;
-            block(trial).modulationData.modulation.stops  = modulationsCellArray{protocolParams.trialTypeOrder(trial)}.stops;
+            block(trial).modulationData.modulation.starts = modulationsCellArray{protocolParams.trialTypeOrder(2,trial),protocolParams.trialTypeOrder(1,trial)}.starts;
+            block(trial).modulationData.modulation.stops  = modulationsCellArray{protocolParams.trialTypeOrder(2,trial),protocolParams.trialTypeOrder(1,trial)}.stops;
             
             % Flip a coin to decide whether we'll have a blank event or not.
             % If yes, then define what the start and stop indices are for this event in this segment

@@ -24,7 +24,7 @@ protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = false;
+protocolParams.simulate.makePlots = true;
 protocolParams.simulate.radiometer = true;
 
 % Trial type information.
@@ -40,6 +40,7 @@ protocolParams.simulate.radiometer = true;
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
 trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
+protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 % order below is L-M, L+M, L iso, M iso.
 protocolParams.maxContrastPerDirection = [0.06,0.5,0.1,0.1]; 
 
