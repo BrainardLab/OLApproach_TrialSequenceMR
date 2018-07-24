@@ -40,7 +40,8 @@ protocolParams.simulate.radiometer = true;
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
 trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
-protocolParams.contrastLevels = 0.8*trialTypeParams.contrastLevels;
+% order below is L-M, L+M, L iso, M iso.
+protocolParams.maxContrastPerDirection = [0.06,0.5,0.1,0.1]; 
 
 % Number of trials
 %
@@ -231,7 +232,7 @@ nDirections = nDirections+1;
 directions{nDirections} = 'ConeDirectedDirection1';
 
 ConeDirectedParams1 = ConeDirectedParams;
-LMinusMContrast = 0.06;
+LMinusMContrast = protocolParams.maxContrastPerDirection(1);
 ConeDirectedParams1.modulationContrast = [LMinusMContrast -LMinusMContrast LMinusMContrast -LMinusMContrast];
 ConeDirectedParams1.whichReceptorsToIsolate = [1 2 4 5];
 
@@ -256,7 +257,7 @@ directions{nDirections} = 'ConeDirectedDirection2';
 %
 % Again, the contrast was chosen by hand.
 ConeDirectedParams2 = ConeDirectedParams;
-LPlusMContrast = 0.50;
+LPlusMContrast = protocolParams.maxContrastPerDirection(2);
 ConeDirectedParams2.modulationContrast = [LPlusMContrast LPlusMContrast LPlusMContrast LPlusMContrast];
 ConeDirectedParams2.whichReceptorsToIsolate = [1 2 4 5];
 ConeDirectedBackground2 = ConeDirectedBackground;
@@ -277,7 +278,7 @@ directions{nDirections} = 'ConeDirectedDirection3';
 %
 % Again, the contrast was chosen by hand.
 ConeDirectedParams3 = ConeDirectedParams;
-LDirectedContrast = 0.10;
+LDirectedContrast = protocolParams.maxContrastPerDirection(3);
 ConeDirectedParams3.modulationContrast = [LDirectedContrast LDirectedContrast];
 ConeDirectedParams3.whichReceptorsToIsolate = [1 4];
 ConeDirectedBackground3 = ConeDirectedBackground;
@@ -298,7 +299,7 @@ directions{nDirections} = 'ConeDirectedDirection4';
 %
 % Again, the contrast was chosen by hand.
 ConeDirectedParams4 = ConeDirectedParams;
-MDirectedContrast = 0.10;
+MDirectedContrast = protocolParams.maxContrastPerDirection(4);
 ConeDirectedParams4.modulationContrast = [MDirectedContrast MDirectedContrast];
 ConeDirectedParams4.whichReceptorsToIsolate = [2 5];
 ConeDirectedBackground4 = ConeDirectedBackground;

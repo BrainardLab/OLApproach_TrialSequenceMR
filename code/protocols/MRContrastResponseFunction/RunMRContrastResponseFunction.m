@@ -4,10 +4,10 @@ clear
 % better fit our needs by taking in multiple directions and key/value
 % pairs but in the interest of making the scan on 04/11 it will be simple.]
 
-[protocolParams,trialTypeParams,lightFluxDirection,background, ol]  = setAndSaveParams();
+[protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol]  = setAndSaveParams();
 
 %% Make the temporal modulations for experiment
-[modulationsCellArray,pulseParams] = makeTemporalModulations(lightFluxDirection,background,trialTypeParams,protocolParams);
+[modulationsCellArray,pulseParams] = makeTemporalModulations(ConeDirectedDirections,ConeDirectedBackground,trialTypeParams,protocolParams);
 
 %% Run the experiment.
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
