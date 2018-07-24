@@ -23,9 +23,9 @@ protocolParams.protocol = 'MRContrastResponseFunction';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = true;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.oneLight = false;
+protocolParams.simulate.makePlots = false;
+protocolParams.simulate.radiometer = false;
 
 % Trial type information.
 %
@@ -409,8 +409,9 @@ for mm = 1:length(directions)
     for kk = 1:protocolParams.nValidationsPerDirection
         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_post-correction'));
     end
+    fprintf('*\tValiadtion Done: post-corrections\n');
 end
-fprintf('*\tValiadtion Done: post-corrections\n');
+
 
 ConeDirectedDirections = {ConeDirectedDirection1,ConeDirectedDirection2,ConeDirectedDirection3,ConeDirectedDirection4};
 
