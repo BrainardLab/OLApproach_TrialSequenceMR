@@ -42,7 +42,7 @@ protocolParams.simulate.radiometer = false;
 trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
 protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 % order below is L-M, L+M, L iso, M iso.
-protocolParams.maxContrastPerDirection = [0.06,0.5,0.1,0.1]; 
+protocolParams.maxContrastPerDirection = [0.06,0.40,0.1,0.1]; 
 
 % Number of trials
 %
@@ -100,7 +100,7 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxA';
-protocolParams.calibrationType = 'BoxALiquidLightGuideCEyePiece2_ND09';
+protocolParams.calibrationType = 'BoxARandomizedLongCableDStubbyEyePiece1_ND02';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
@@ -236,6 +236,7 @@ ConeDirectedParams1 = ConeDirectedParams;
 LMinusMContrast = protocolParams.maxContrastPerDirection(1);
 ConeDirectedParams1.modulationContrast = [LMinusMContrast -LMinusMContrast LMinusMContrast -LMinusMContrast];
 ConeDirectedParams1.whichReceptorsToIsolate = [1 2 4 5];
+ConeDirectedParams1.primaryHeadRoom = 0;
 
 % Make direction. For contrast reporting to come out, we need some name matching
 % between direction and background, which is why the background gets copied
@@ -261,6 +262,7 @@ ConeDirectedParams2 = ConeDirectedParams;
 LPlusMContrast = protocolParams.maxContrastPerDirection(2);
 ConeDirectedParams2.modulationContrast = [LPlusMContrast LPlusMContrast LPlusMContrast LPlusMContrast];
 ConeDirectedParams2.whichReceptorsToIsolate = [1 2 4 5];
+ConeDirectedParams2.primaryHeadRoom = 0;
 ConeDirectedBackground2 = ConeDirectedBackground;
 [ConeDirectedDirection2] = OLDirectionNominalFromParams(ConeDirectedParams2, cal, ...
     'observerAge',protocolParams.observerAge, ...
@@ -282,6 +284,7 @@ ConeDirectedParams3 = ConeDirectedParams;
 LDirectedContrast = protocolParams.maxContrastPerDirection(3);
 ConeDirectedParams3.modulationContrast = [LDirectedContrast LDirectedContrast];
 ConeDirectedParams3.whichReceptorsToIsolate = [1 4];
+ConeDirectedParams3.primaryHeadRoom = 0;
 ConeDirectedBackground3 = ConeDirectedBackground;
 [ConeDirectedDirection3] = OLDirectionNominalFromParams(ConeDirectedParams3, cal, ...
     'observerAge',protocolParams.observerAge, ...
@@ -303,6 +306,7 @@ ConeDirectedParams4 = ConeDirectedParams;
 MDirectedContrast = protocolParams.maxContrastPerDirection(4);
 ConeDirectedParams4.modulationContrast = [MDirectedContrast MDirectedContrast];
 ConeDirectedParams4.whichReceptorsToIsolate = [2 5];
+ConeDirectedParams4.primaryHeadRoom = 0;
 ConeDirectedBackground4 = ConeDirectedBackground;
 [ConeDirectedDirection4] = OLDirectionNominalFromParams(ConeDirectedParams4, cal, ...
     'observerAge',protocolParams.observerAge, ...
@@ -367,50 +371,50 @@ nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominal
 %          validation struct from the object, or by taking it as an output
 %          argument from OLValidateDirection.]
 % [* NOTE: Add loop here for number of validations]
-
-
-fprintf('*\tStarting Valiadtion: pre-corrections\n');
-
-for jj = 1:length(directions)
-    switch directions{jj}
-        case 'ConeDirectedDirection1'
-            directionType = 'LminusM';
-        case 'ConeDirectedDirection2'
-            directionType = 'LplusM';
-        case 'ConeDirectedDirection3'
-            directionType = 'LIsolating';
-        case 'ConeDirectedDirection4'
-            directionType = 'MIsolating';
-    end
-    for ii = 1:protocolParams.nValidationsPerDirection
-        preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_pre-correction'));
-    end
-    fprintf('*\tValiadtion Done: pre-corrections\n');
-end
-%% Correction direction, validate post correction
-fprintf('*\tStarting Corrections\n');
-for qq = 1:length(directions)
-    OLCorrectDirection(eval(directions{qq}),ConeDirectedBackground,ol,radiometer);
-    fprintf('*\tCorrection Done\n');
-end
-
-fprintf('*\tStarting Valiadtion: post-corrections\n');
-for mm = 1:length(directions)
-    switch directions{mm}
-        case 'ConeDirectedDirection1'
-            directionType = 'LminusM';
-        case 'ConeDirectedDirection2'
-            directionType = 'LplusM';
-        case 'ConeDirectedDirection3'
-            directionType = 'LIsolating';
-        case 'ConeDirectedDirection4'
-            directionType = 'MIsolating';
-    end
-    for kk = 1:protocolParams.nValidationsPerDirection
-        postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_post-correction'));
-    end
-    fprintf('*\tValiadtion Done: post-corrections\n');
-end
+% 
+% 
+% fprintf('*\tStarting Valiadtion: pre-corrections\n');
+% 
+% for jj = 1:length(directions)
+%     switch directions{jj}
+%         case 'ConeDirectedDirection1'
+%             directionType = 'LminusM';
+%         case 'ConeDirectedDirection2'
+%             directionType = 'LplusM';
+%         case 'ConeDirectedDirection3'
+%             directionType = 'LIsolating';
+%         case 'ConeDirectedDirection4'
+%             directionType = 'MIsolating';
+%     end
+%     for ii = 1:protocolParams.nValidationsPerDirection
+%         preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_pre-correction'));
+%     end
+%     fprintf('*\tValiadtion Done: pre-corrections\n');
+% end
+% %% Correction direction, validate post correction
+% fprintf('*\tStarting Corrections\n');
+% for qq = 1:length(directions)
+%     OLCorrectDirection(eval(directions{qq}),ConeDirectedBackground,ol,radiometer);
+%     fprintf('*\tCorrection Done\n');
+% end
+% 
+% fprintf('*\tStarting Valiadtion: post-corrections\n');
+% for mm = 1:length(directions)
+%     switch directions{mm}
+%         case 'ConeDirectedDirection1'
+%             directionType = 'LminusM';
+%         case 'ConeDirectedDirection2'
+%             directionType = 'LplusM';
+%         case 'ConeDirectedDirection3'
+%             directionType = 'LIsolating';
+%         case 'ConeDirectedDirection4'
+%             directionType = 'MIsolating';
+%     end
+%     for kk = 1:protocolParams.nValidationsPerDirection
+%         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_post-correction'));
+%     end
+%     fprintf('*\tValiadtion Done: post-corrections\n');
+% end
 
 
 ConeDirectedDirections = {ConeDirectedDirection1,ConeDirectedDirection2,ConeDirectedDirection3,ConeDirectedDirection4};
