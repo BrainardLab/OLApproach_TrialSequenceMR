@@ -46,7 +46,7 @@ else
 end
 
 %% Get trial order
-directionOrder = repmat(randperm(size(modulationsCellArray,1)),6,1);
+directionOrder = repmat(1:size(modulationsCellArray,1),6,1);
 
 if isempty(p.Results.acquisitionOrder)
     nRepeatsPerTrialType = protocolParams.nTrials/(size(modulationsCellArray,2)-1); % the -1 is to exclude the bacground starts/stops from the calculation
@@ -55,13 +55,18 @@ if isempty(p.Results.acquisitionOrder)
     end
     protocolParams.trialTypeOrder = [];
     for ii = 1:nRepeatsPerTrialType
-        protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder randperm(size(modulationsCellArray,2)-1)];  % the -1 is to exclude the bacground starts/stops from the calculation
+        protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder 1:(size(modulationsCellArray,2)-1)];  % the -1 is to exclude the bacground starts/stops from the calculation
     end
 else
     protocolParams.trialTypeOrder = p.Results.acquisitionOrder;
 end
 
 protocolParams.trialTypeOrder = [protocolParams.trialTypeOrder;directionOrder(:)'];
+
+%randomly shuffle columns
+cols = size(protocolParams.trialTypeOrder,2);
+P = randperm(cols);
+protocolParams.trialTypeOrder = protocolParams.trialTypeOrder(:,P);
 
 %% Start session log
 %
