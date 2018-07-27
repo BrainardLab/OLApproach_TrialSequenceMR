@@ -1,4 +1,4 @@
-function [] = postExpValidation(numValidations,protocolParams,ol,lightFluxDirection,background)
+function [] = postExpValidation(numValidations,protocolParams,ol,directedDirection,background)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -20,14 +20,15 @@ calibration = OLGetCalibrationStructure('CalibrationType',protocolParams.calibra
 lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
 lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
 receptors = lmsDirection.describe.directionParams.T_receptors;
-
-for ii = 1:numValidations
-    OLValidateDirection(lightFluxDirection,background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
+for jj = 1:length(directedDirection)
+    for ii = 1:numValidations
+        OLValidateDirection(directedDirection{jj},background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
+    end
 end
 
 %% Close PR-670
 if exist('radiometer', 'var')
-   try
-       radiometer.shutDown
-   end
+    try
+        radiometer.shutDown
+    end
 end

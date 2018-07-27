@@ -13,4 +13,4 @@ clear
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Post-Experiemnt Validations. 
-postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,lightFluxDirection,background);
+postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,ConeDirectedDirections,ConeDirectedBackground);
