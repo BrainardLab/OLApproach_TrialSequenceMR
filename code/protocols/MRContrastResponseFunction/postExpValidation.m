@@ -1,4 +1,4 @@
-function [] = postExpValidation(numValidations,protocolParams,ol,directedDirection,background)
+function [] = postExpValidation(numValidations,protocolParams,ol,directedDirection,background,directions)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -15,16 +15,32 @@ else
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
 
-%% Get receptors from other direction
-calibration = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType);
-lmsDirectionParams = OLDirectionParamsFromName('MaxLMS_unipolar_275_60_667');
-lmsDirection = OLDirectionNominalFromParams(lmsDirectionParams, calibration, 'observerAge', protocolParams.observerAge);
-receptors = lmsDirection.describe.directionParams.T_receptors;
+
 for jj = 1:length(directedDirection)
+    switch directions{jj}
+        case 'ConeDirectedDirection1'
+            directionType = 'LminusM';
+        case 'ConeDirectedDirection2'
+            directionType = 'LplusM';
+        case 'ConeDirectedDirection3'
+            directionType = 'LIsolating';
+        case 'ConeDirectedDirection4'
+            directionType = 'MIsolating';
+    end
     for ii = 1:numValidations
-        OLValidateDirection(directedDirection{jj},background,ol,radiometer,'receptors', receptors, 'label', 'post-experiment');
+        OLValidateDirection(directedDirection{jj},background,ol,radiometer,'receptors', protocolParams.receptors , 'label', ['post-experiment-', directionType]);
     end
 end
+
+
+
+%% Save post experiment validations:
+correctedSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedValidationBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(correctedSavePath)
+    mkdir(correctedSavePath)
+end
+modulationSaveName = fullfile(correctedSavePath,'postExpValidations.mat');
+save(modulationSaveName,'directedDirection','background');
 
 %% Close PR-670
 if exist('radiometer', 'var')

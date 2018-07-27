@@ -1,4 +1,4 @@
-function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol]  = setAndSaveParams()
+function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol, directions]  = setAndSaveParams()
 
 
 % setAndSaveParams
@@ -318,7 +318,7 @@ ConeDirectedBackground4 = ConeDirectedBackground;
 % Get receptor sensitivities used, so that we can get cone contrasts out below.
 receptorStrings = ConeDirectedDirection1.describe.directionParams.photoreceptorClasses;
 fieldSizes = ConeDirectedDirection1.describe.directionParams.fieldSizeDegrees;
-receptors = GetHumanPhotoreceptorSS(ConeDirectedDirection1.calibration.describe.S,receptorStrings,fieldSizes,protocolParams.observerAge,6,[],[]);
+protocolParams.receptors = GetHumanPhotoreceptorSS(ConeDirectedDirection1.calibration.describe.S,receptorStrings,fieldSizes,protocolParams.observerAge,6,[],[]);
 
 % Loop and report
 for dd = 1:length(directions)
@@ -330,12 +330,12 @@ for dd = 1:length(directions)
     % from the direction object.
     direction = eval(directions{dd});
     background = eval(strrep(directions{dd},'Direction','Background'));
-    [~, excitations, excitationDiffs] = direction.ToDesiredReceptorContrast(background,receptors);
+    [~, excitations, excitationDiffs] = direction.ToDesiredReceptorContrast(background,protocolParams.receptors);
     
     % Grab the relevant contrast information from the OLDirection object an
     % and report. Keep pos and neg contrast explicitly separate. These
     % should match in magnitude but be flipped in sign.
-    for j = 1:size(receptors,1)
+    for j = 1:size(protocolParams.receptors,1)
         fprintf('  * <strong>%s, %0.1f degrees</strong>: contrast pos = %0.1f, neg = %0.1f%%\n',receptorStrings{j},fieldSizes(j),100*excitationDiffs(j,1)/excitations(j,1),100*excitationDiffs(j,2)/excitations(j,1));
     end
     
@@ -387,7 +387,7 @@ nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominal
 %             directionType = 'MIsolating';
 %     end
 %     for ii = 1:protocolParams.nValidationsPerDirection
-%         preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_pre-correction'));
+%         preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionType,'_pre-correction'));
 %     end
 %     fprintf('*\tValiadtion Done: pre-corrections\n');
 % end
@@ -411,7 +411,7 @@ nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominal
 %             directionType = 'MIsolating';
 %     end
 %     for kk = 1:protocolParams.nValidationsPerDirection
-%         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', receptors, 'label', strcat(directionType,'_post-correction'));
+%         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionType,'_post-correction'));
 %     end
 %     fprintf('*\tValiadtion Done: post-corrections\n');
 % end
