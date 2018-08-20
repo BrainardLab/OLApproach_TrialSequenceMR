@@ -1,4 +1,4 @@
-function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol, directions]  = setAndSaveParams()
+function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol, directions]  = setAndSaveParams(protocolParams)
 
 
 % setAndSaveParams
@@ -11,23 +11,7 @@ function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBack
 % History:
 %  06/28/17  mab  Attemting to split into scanner friendly funcitons.
 
-
-%% Clear
-clear; close all;
-
-%% Set the parameter structure here
-%
-% Who we are and what we're doing today
-protocolParams.approach = 'OLApproach_TrialSequenceMR';
-protocolParams.protocol = 'MRContrastResponseFunction';
-protocolParams.protocolOutputName = 'CRF';
-protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
-protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = false;
-protocolParams.simulate.radiometer = true;
-
-% Trial type information.
+%% Trial type information.
 %
 % A set of arrays of the same length that paired up
 % determine what primaries get generated for each
@@ -40,9 +24,13 @@ protocolParams.simulate.radiometer = true;
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
 trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
+
+%set the contrast vector angle in the LM plane.
+%  0 = L, 90 = M, 45 = L+M, -45 = L-M;
+protocolParams.LMVectorAngles =[-22.5, 22.5, 67.5, 112.5];  
 protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
-% order below is L-M, L+M, L iso, M iso.
-protocolParams.maxContrastPerDirection = [0.06,0.40,0.1,0.1]; 
+% order below matches the contrast angle vector above.
+protocolParams.maxContrastPerDirection = [0.085,0.24,0.20,0.10]; 
 
 % Number of trials
 %
@@ -133,9 +121,6 @@ if (~strcmp(getpref('OneLightToolbox','OneLightCalData'),getpref(protocolParams.
 end
 cal = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType,'CalibrationDate','latest');
 
-%% Direction counter
-nDirections = 0;
-
 %% Load cmfs
 eval(['tempXYZ = load(''T_' whichXYZ ''');']);
 eval(['T_xyz = SplineCmf(tempXYZ.S_' whichXYZ ',683*tempXYZ.T_' whichXYZ ',cal.describe.S);']);
@@ -219,6 +204,9 @@ ConeDirectedParams = OLDirectionParamsFromName('ConeDirected', ...
 ConeDirectedParams.photoreceptorClasses = {'LConeTabulatedAbsorbance','MConeTabulatedAbsorbance','SConeTabulatedAbsorbance','LConeTabulatedAbsorbance','MConeTabulatedAbsorbance','SConeTabulatedAbsorbance'};
 ConeDirectedParams.fieldSizeDegrees = [2 2 2 15 15 15];
 
+%% Direction counter
+nDirections = 0;
+
 %% Make direction 1, L-M
 %
 % Make a copy of the base parameters and set contrasts for an
@@ -231,10 +219,11 @@ ConeDirectedParams.fieldSizeDegrees = [2 2 2 15 15 15];
 % quickly.
 nDirections = nDirections+1;
 directions{nDirections} = 'ConeDirectedDirection1';
-
+LContrast = cosd(protocolParams.LMVectorAngles(1));
+MContrast = sind(protocolParams.LMVectorAngles(1));
 ConeDirectedParams1 = ConeDirectedParams;
-LMinusMContrast = protocolParams.maxContrastPerDirection(1);
-ConeDirectedParams1.modulationContrast = [LMinusMContrast -LMinusMContrast LMinusMContrast -LMinusMContrast];
+maxContrast = protocolParams.maxContrastPerDirection(1);
+ConeDirectedParams1.modulationContrast = maxContrast.*[LContrast MContrast LContrast MContrast];
 ConeDirectedParams1.whichReceptorsToIsolate = [1 2 4 5];
 ConeDirectedParams1.primaryHeadRoom = 0;
 
@@ -259,8 +248,10 @@ directions{nDirections} = 'ConeDirectedDirection2';
 %
 % Again, the contrast was chosen by hand.
 ConeDirectedParams2 = ConeDirectedParams;
-LPlusMContrast = protocolParams.maxContrastPerDirection(2);
-ConeDirectedParams2.modulationContrast = [LPlusMContrast LPlusMContrast LPlusMContrast LPlusMContrast];
+LContrast = cosd(protocolParams.LMVectorAngles(2));
+MContrast = sind(protocolParams.LMVectorAngles(2));
+maxContrast = protocolParams.maxContrastPerDirection(2);
+ConeDirectedParams2.modulationContrast = maxContrast.*[LContrast MContrast LContrast MContrast];
 ConeDirectedParams2.whichReceptorsToIsolate = [1 2 4 5];
 ConeDirectedParams2.primaryHeadRoom = 0;
 ConeDirectedBackground2 = ConeDirectedBackground;
@@ -281,9 +272,11 @@ directions{nDirections} = 'ConeDirectedDirection3';
 %
 % Again, the contrast was chosen by hand.
 ConeDirectedParams3 = ConeDirectedParams;
-LDirectedContrast = protocolParams.maxContrastPerDirection(3);
-ConeDirectedParams3.modulationContrast = [LDirectedContrast LDirectedContrast];
-ConeDirectedParams3.whichReceptorsToIsolate = [1 4];
+LContrast = cosd(protocolParams.LMVectorAngles(3));
+MContrast = sind(protocolParams.LMVectorAngles(3));
+maxContrast = protocolParams.maxContrastPerDirection(3);
+ConeDirectedParams3.modulationContrast = maxContrast.*[LContrast MContrast LContrast MContrast];
+ConeDirectedParams3.whichReceptorsToIsolate = [1 2 4 5];
 ConeDirectedParams3.primaryHeadRoom = 0;
 ConeDirectedBackground3 = ConeDirectedBackground;
 [ConeDirectedDirection3] = OLDirectionNominalFromParams(ConeDirectedParams3, cal, ...
@@ -303,9 +296,11 @@ directions{nDirections} = 'ConeDirectedDirection4';
 %
 % Again, the contrast was chosen by hand.
 ConeDirectedParams4 = ConeDirectedParams;
-MDirectedContrast = protocolParams.maxContrastPerDirection(4);
-ConeDirectedParams4.modulationContrast = [MDirectedContrast MDirectedContrast];
-ConeDirectedParams4.whichReceptorsToIsolate = [2 5];
+LContrast = cosd(protocolParams.LMVectorAngles(4));
+MContrast = sind(protocolParams.LMVectorAngles(4));
+maxContrast = protocolParams.maxContrastPerDirection(4);
+ConeDirectedParams4.modulationContrast = maxContrast.*[LContrast MContrast LContrast MContrast];
+ConeDirectedParams4.whichReceptorsToIsolate = [1 2 4 5];
 ConeDirectedParams4.primaryHeadRoom = 0;
 ConeDirectedBackground4 = ConeDirectedBackground;
 [ConeDirectedDirection4] = OLDirectionNominalFromParams(ConeDirectedParams4, cal, ...
