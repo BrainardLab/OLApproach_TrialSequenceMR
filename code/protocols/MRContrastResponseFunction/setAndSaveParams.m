@@ -366,50 +366,52 @@ nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominal
 %          validation struct from the object, or by taking it as an output
 %          argument from OLValidateDirection.]
 % [* NOTE: Add loop here for number of validations]
-% 
-% 
-% fprintf('*\tStarting Valiadtion: pre-corrections\n');
-% 
-% for jj = 1:length(directions)
-%     switch directions{jj}
-%         case 'ConeDirectedDirection1'
-%             directionType = 'LminusM';
-%         case 'ConeDirectedDirection2'
-%             directionType = 'LplusM';
-%         case 'ConeDirectedDirection3'
-%             directionType = 'LIsolating';
-%         case 'ConeDirectedDirection4'
-%             directionType = 'MIsolating';
-%     end
-%     for ii = 1:protocolParams.nValidationsPerDirection
-%         preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionType,'_pre-correction'));
-%     end
-%     fprintf('*\tValiadtion Done: pre-corrections\n');
-% end
-% %% Correction direction, validate post correction
-% fprintf('*\tStarting Corrections\n');
-% for qq = 1:length(directions)
-%     OLCorrectDirection(eval(directions{qq}),ConeDirectedBackground,ol,radiometer);
-%     fprintf('*\tCorrection Done\n');
-% end
-% 
-% fprintf('*\tStarting Valiadtion: post-corrections\n');
-% for mm = 1:length(directions)
-%     switch directions{mm}
-%         case 'ConeDirectedDirection1'
-%             directionType = 'LminusM';
-%         case 'ConeDirectedDirection2'
-%             directionType = 'LplusM';
-%         case 'ConeDirectedDirection3'
-%             directionType = 'LIsolating';
-%         case 'ConeDirectedDirection4'
-%             directionType = 'MIsolating';
-%     end
-%     for kk = 1:protocolParams.nValidationsPerDirection
-%         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionType,'_post-correction'));
-%     end
-%     fprintf('*\tValiadtion Done: post-corrections\n');
-% end
+
+
+fprintf('*\tStarting Valiadtion: pre-corrections\n');
+
+for jj = 1:length(directions)
+    switch directions{jj}
+        case 'ConeDirectedDirection1'
+            directionType = 'LminusM';
+        case 'ConeDirectedDirection2'
+            directionType = 'LplusM';
+        case 'ConeDirectedDirection3'
+            directionType = 'LIsolating';
+        case 'ConeDirectedDirection4'
+            directionType = 'MIsolating';
+    end
+    for ii = 1:protocolParams.nValidationsPerDirection
+        preCorrectionValidation = OLValidateDirection(eval(directions{jj}),ConeDirectedBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionType,'_pre-correction'));
+    end
+    fprintf('*\tValiadtion Done: pre-corrections\n');
+end
+%% Correction direction, validate post correction
+fprintf('*\tStarting Corrections\n');
+for qq = 1:length(directions)
+    OLCorrectDirection(eval(directions{qq}),ConeDirectedBackground,ol,radiometer,...
+        'receptors', protocolParams.receptors, ...
+        'smoothness', .01);
+    fprintf('*\tCorrection Done\n');
+end
+
+fprintf('*\tStarting Valiadtion: post-corrections\n');
+for mm = 1:length(directions)
+    switch directions{mm}
+        case 'ConeDirectedDirection1'
+            directionType = 'LminusM';
+        case 'ConeDirectedDirection2'
+            directionType = 'LplusM';
+        case 'ConeDirectedDirection3'
+            directionType = 'LIsolating';
+        case 'ConeDirectedDirection4'
+            directionType = 'MIsolating';
+    end
+    for kk = 1:protocolParams.nValidationsPerDirection
+        postCorrectionValidation = OLValidateDirection(eval(directions{mm}),ConeDirectedBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionType,'_post-correction'));
+    end
+    fprintf('*\tValiadtion Done: post-corrections\n');
+end
 
 
 ConeDirectedDirections = {ConeDirectedDirection1,ConeDirectedDirection2,ConeDirectedDirection3,ConeDirectedDirection4};
