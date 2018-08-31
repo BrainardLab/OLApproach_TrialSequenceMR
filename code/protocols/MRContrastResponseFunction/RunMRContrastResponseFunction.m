@@ -17,7 +17,6 @@ protocolParams.simulate.radiometer = false;
 % [ *NOTE: MB: I plan on making this a more robust function that will
 % better fit our needs by taking in multiple directions and key/value
 % pairs but in the interest of making the scan on 04/11 it willb be simple.]
-
 [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBackground, ol, directions]  = setAndSaveParams(protocolParams);
 
 %% Make the temporal modulations for experiment
