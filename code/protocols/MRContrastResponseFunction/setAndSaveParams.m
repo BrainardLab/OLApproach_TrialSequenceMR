@@ -87,8 +87,8 @@ protocolParams.attentionEventProb = 2/3;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
-protocolParams.boxName = 'BoxB';
-protocolParams.calibrationType = 'BoxBRandomizedLongCableBEyePiece3Beamsplitter';
+protocolParams.boxName = 'BoxD';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableDStubbyEyePiece1_ND00';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
@@ -389,7 +389,7 @@ end
 %% Correction direction, validate post correction
 fprintf('*\tStarting Corrections\n');
 lightlevelScalar = OLMeasureLightlevelScalar(ol, cal, radiometer);
-OLCorrectDirection(ConeDirectedBackgroud,OLDirection_unipolar.Null(cal),ol,radiometer,...
+OLCorrectDirection(ConeDirectedBackground,OLDirection_unipolar.Null(cal),ol,radiometer,...
         'smoothness', .01,...
         'lightlevelScalar',lightlevelScalar);
 for qq = 1:length(directions)
