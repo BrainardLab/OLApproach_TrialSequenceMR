@@ -119,5 +119,5 @@ responseStruct.tBlockStart = tBlockStart;
 responseStruct.tBlockEnd = tBlockEnd;
 responseStruct.postTrialLoopKeyPresses = postTrialLoopKeyPresses;
 if (protocolParams.verbose), fprintf('Total duration: %f s\n', responseStruct.tBlockEnd-responseStruct.tBlockStart); end
-
+if (protocolParams.verbose), fprintf('Score: %.2f percent\n', calcTaskAccuracy(responseStruct,block)); end
 end
