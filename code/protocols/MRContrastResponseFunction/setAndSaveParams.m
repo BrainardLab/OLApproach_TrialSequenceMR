@@ -30,7 +30,7 @@ trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
 protocolParams.LMVectorAngles =[-45, 0, 45, 90];  
 protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 % order below matches the contrast angle vector above.
-% Max values for Box D in 10/18 are [0.085,0.20,0.40,0.13] for the -45 and [.12, .14, .60 , .22] for the -22.5;
+% Max values for Box D in 10/18 are [0.085,0.20,0.40,0.13] for the -22.5 and [.12, .14, .60 , .22] for the -45;
 
 protocolParams.maxContrastPerDirection = [.12, .14, .60 , .22]; 
 
