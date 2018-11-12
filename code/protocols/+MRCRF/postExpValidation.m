@@ -35,7 +35,7 @@ end
 
 
 %% Save post experiment validations:
-correctedSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedValidationBasePath'),protocolParams.observerID,protocolParams.todayDate);
+correctedSavePath = fullfile(getpref('MRCRF','DirectionCorrectedValidationBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(correctedSavePath)
     mkdir(correctedSavePath)
 end

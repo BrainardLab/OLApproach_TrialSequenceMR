@@ -1,7 +1,7 @@
 % RunMRContrastResponseFunction
 %
 % Description:
-%   Define the parameters for the MRContrastResponseFunction protocol of the
+%   Define the parameters for the MRCRF protocol of the
 %   OLApproach_TrialSequenceMR approach, and then invoke each of the
 %   steps required to set up and run a session of the experiment.
 
@@ -19,7 +19,7 @@ clear; close all;
 %
 % Who we are and what we're doing today
 protocolParams.approach = 'OLApproach_TrialSequenceMR';
-protocolParams.protocol = 'MRContrastResponseFunction';
+protocolParams.protocol = 'MRCRF';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;

@@ -27,7 +27,7 @@ index = length(modulationsCellArray) + 1;
 [modulationsCellArray{index}.backgroundStarts, modulationsCellArray{index}.backgroundStops] = OLPrimaryToStartsStops(background.differentialPrimaryValues,background.calibration);
 
 %% Save modulations
-modulationSavePath = fullfile(getpref('MRContrastResponseFunction','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
+modulationSavePath = fullfile(getpref('MRCRF','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(modulationSavePath)
     mkdir(modulationSavePath)                          
 end

@@ -33,7 +33,7 @@ end
 modulationsCellArray = [modulationsCellArray , repmat({tempCell},4,1)]; 
 
 %% Save modulations
-modulationSavePath = fullfile(getpref('MRContrastResponseFunction','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
+modulationSavePath = fullfile(getpref('MRCRF','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(modulationSavePath)
     mkdir(modulationSavePath)
 end

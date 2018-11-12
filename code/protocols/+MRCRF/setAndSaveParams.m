@@ -4,7 +4,7 @@ function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBack
 % setAndSaveParams
 %
 % Description:
-%   Define the parameters for the MRContrastResponseFunction protocol of the
+%   Define the parameters for the MRCRF protocol of the
 %   OLApproach_TrialSequenceMR approach, and then invoke each of the
 %   steps required to set up and run a session of the experiment.
 
@@ -113,8 +113,8 @@ protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 whichXYZ = 'xyzCIEPhys10';
 
 %% Define altnernate dictionary functions.
-backgroundAlternateDictionary = 'OLBackgroundParamsDictionary_Color';
-directionAlternateDictionary = 'OLDirectionParamsDictionary_Color';
+backgroundAlternateDictionary = 'MRCRF.OLBackgroundParamsDictionary_Color';
+directionAlternateDictionary = 'MRCRF.OLDirectionParamsDictionary_Color';
 
 %% Set calibration structure for OneLight.
 % set up the calibrationStructure
@@ -152,7 +152,7 @@ protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 %% At this point, we have all the parameters for today.
 %
 % SAVE PARMETERS INTO Parameters DATA TREE
-modulationSavePath = fullfile(getpref('MRContrastResponseFunction','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+modulationSavePath = fullfile(getpref('MRCRF','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(modulationSavePath)
     mkdir(modulationSavePath)
 end
@@ -346,7 +346,7 @@ for dd = 1:length(directions)
 end
 
 %% Save Nominal Primaries:
-nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
+nominalSavePath = fullfile(getpref('MRCRF','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
 % if ~exist(nominalSavePath)
 %     mkdir(nominalSavePath)
 % end
@@ -425,7 +425,7 @@ end
 ConeDirectedDirections = {ConeDirectedDirection1,ConeDirectedDirection2,ConeDirectedDirection3,ConeDirectedDirection4};
 
 %% Save Corrected Primaries:
-correctedSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+correctedSavePath = fullfile(getpref('MRCRF','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(correctedSavePath)
     mkdir(correctedSavePath)
 end
