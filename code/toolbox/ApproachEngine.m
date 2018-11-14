@@ -49,7 +49,9 @@ end
 %% Start session log
 %
 % Add protocol output name and acquisition (scan) number
-protocolParams = OLSessionLog(protocolParams,'Experiment','StartEnd','start');
+if ~(protocolParams.simulate.oneLight)
+    protocolParams = OLSessionLog(protocolParams,'Experiment','StartEnd','start');
+end
 
 
 %% Put together the block struct array.
