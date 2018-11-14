@@ -22,16 +22,15 @@ EmptyModulation = OLAssembleModulation([MaxMelBackground, MaxMelDirection], [one
 % the last entry needs to to be a cell entry with the background starts and
 % stops
 [tempCell.backgroundStarts, tempCell.backgroundStops] =OLPrimaryToStartsStops(MaxMelBackground.differentialPrimaryValues,MaxMelBackground.calibration);
-modulationsCellArray = [modulationsCellArray, EmptyModulation, repmat({tempCell},1,1)]; 
+modulationsCellArray = [modulationsCellArray, EmptyModulation, repmat({tempCell},1,1)];
 
 %% Save modulations
 modulationSavePath = fullfile(getpref('MRMMT','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~(protocolParams.simulate.oneLight)
-    if ~exist(modulationSavePath)
-        mkdir(modulationSavePath)
-    end
-    modulationSaveName = fullfile(modulationSavePath,'modulations.mat');
-    save(modulationSaveName,'modulationsCellArray','pulseParams','protocolParams','directedDirection');
+if ~exist(modulationSavePath)
+    mkdir(modulationSavePath)
 end
+modulationSaveName = fullfile(modulationSavePath,'modulations.mat');
+save(modulationSaveName,'modulationsCellArray','pulseParams','protocolParams','MaxMelDirection');
+
 
 

@@ -131,22 +131,18 @@ fprintf('\tUsing target background xyY: %0.3f %0.3f %0.01\n',targetxyY(1),target
 %
 % The call to OLSessionLog sets up info in protocolParams for where
 % the logs go.
-if ~(protocolParams.simulate.oneLight)
-    protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
-end
+protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 %% At this point, we have all the parameters for today.
 %
 % SAVE PARMETERS INTO Parameters DATA TREE
 modulationSavePath = fullfile(getpref('MRMMT','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~(protocolParams.simulate.oneLight)
-    if ~exist(modulationSavePath)
-        mkdir(modulationSavePath)
-    end
+if ~exist(modulationSavePath)
+    mkdir(modulationSavePath)
 end
+
 modulationSaveName = fullfile(modulationSavePath,'scanParamters.mat');
-if ~(protocolParams.simulate.oneLight)
-    save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams');
-end
+save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams');
+
 
 %% Open the OneLight
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
@@ -317,14 +313,13 @@ end
 
 
 %% Save Corrected Primaries:
-if ~(protocolParams.simulate.oneLight)
-    correctedSavePath = fullfile(getpref('MRMMT','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
-    if ~exist(correctedSavePath)
-        mkdir(correctedSavePath)
-    end
-    modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
-    save(modulationSaveName,'ConeDirectedDirections','ConeDirectedBackground');
+correctedSavePath = fullfile(getpref('MRMMT','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(correctedSavePath)
+    mkdir(correctedSavePath)
 end
+modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
+save(modulationSaveName,'MaxMelDirection','MaxMelBackground');
+
 
 
 %% Close PR-670
