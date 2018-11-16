@@ -1,31 +1,32 @@
-function [modulationsCellArray,pulseParams] = makeTemporalModulations(MaxMelDirection,MaxMelBackground,trialTypeParams,protocolParams)
+function [modulationsCellArray,temporalParams] = makeTemporalModulations(modDirection,modBackground,protocolParams)
 
 
 
 %% Make modulations
 %
 % Make temporal waveform for my experiment
-pulseParams = OLWaveformParamsFromName('MaxContrastPulse'); % get generic pulse parameters
-pulseParams.stimulusDuration = 4; % 4 second pulses
-[Pulse400Waveform, pulseTimestep] = OLWaveformFromParams(pulseParams); % 4 second pulse waveform max contrast
+temporalParams = OLWaveformParamsFromName('MaxContrastSinusoid');
+temporalParams.frequency = 16;
+temporalParams.stimulusDuration = 12; % in sec
+temporalParams.timeStep = 1/100;
+[waveforms,timestep]=OLWaveformFromParams(temporalParams);
 
+% First make the trial type that has maximal flicker
+flickerModulation = OLAssembleModulation([modBackground, modDirection],[ones(size(waveforms)); waveforms]);
 
-Mel400PulseModulation = OLAssembleModulation([MaxMelBackground, MaxMelDirection], [ones(1, length(Pulse400Waveform)); Pulse400Waveform]);
-modulationsCellArray{1} = Mel400PulseModulation;
+% Now make a trial type with 0% contrast and thus no flicker
+emptyModulation = OLAssembleModulation([modBackground, modDirection], [ones(size(waveforms)); zeros(size(waveforms))]);
 
-% also make a modulation with 0% contrast. this will be akin to just
-% showing the background
-EmptyModulation = OLAssembleModulation([MaxMelBackground, MaxMelDirection], [ones(1, length(Pulse400Waveform)); zeros(1,length(Pulse400Waveform))]);
+% Now create a third entry that is the background state to be used before
+% and after the experiment
+[tempCell.backgroundStarts, tempCell.backgroundStops] =OLPrimaryToStartsStops(modBackground.differentialPrimaryValues,modBackground.calibration);
 
+% Assemble the three types into a single cell array
+modulationsCellArray = [flickerModulation, emptyModulation, repmat({tempCell},1,1)];
 
-%% Get the background starts and stops
-% the last entry needs to to be a cell entry with the background starts and
-% stops
-[tempCell.backgroundStarts, tempCell.backgroundStops] =OLPrimaryToStartsStops(MaxMelBackground.differentialPrimaryValues,MaxMelBackground.calibration);
-modulationsCellArray = [modulationsCellArray, EmptyModulation, repmat({tempCell},1,1)];
 
 %% Save modulations
-modulationSavePath = fullfile(getpref('MRMMT','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
+modulationSavePath = fullfile(getpref('MRMaxFlash','modulationsBasePath'),protocolParams.observerID,protocolParams.todayDate);
 if ~exist(modulationSavePath)
     mkdir(modulationSavePath)
 end

@@ -1,4 +1,4 @@
-function dictionary = OLDirectionParamsDictionary_MaxMel(varargin)
+function dictionary = OLDirectionParamsDictionary(varargin)
 % Defines a dictionary with parameters for named nominal directions
 %
 % Syntax:

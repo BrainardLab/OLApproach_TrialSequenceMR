@@ -1,4 +1,4 @@
-function protocolParams = makeTrialOrder(protocolParams,modulationsCellArray,varargin)
+function protocolParams = makeTrialOrder(protocolParams,varargin)
 % Generate the trial order for the MRMMT experiment. Just a dummy order for
 % now.
 %
@@ -28,5 +28,7 @@ p.addParameter('acquisitionOrder',[],@isnumeric);
 p.parse(varargin{:});
 
 %% Get trial order
-protocolParams.trialTypeOrder = [1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2]; %2s are for the second item in the modulationCellArray, which is the empty trial. 1s are a 400% pulse of mel. for now they're just in alternating order
-protocolParams.trialTypeOrder(2,:) = ones(1,length(protocolParams.trialTypeOrder));
+repElement = [1 2];
+protocolParams.trialTypeOrder(1,:) = repmat(repElement,1,protocolParams.nTrials./length(repElement));
+protocolParams.trialTypeOrder(2,:) = ones(1,protocolParams.nTrials);
+
