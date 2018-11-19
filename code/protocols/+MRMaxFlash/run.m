@@ -17,7 +17,7 @@ protocolParams.simulate.radiometer = true;
 
 
 %% Set up all the parameters and make Modulations
-[protocolParams,modDirection,background, ol, directions] = MRMaxFlash.setAndSaveParams(protocolParams);
+[protocolParams,modDirection,background, ol] = MRMaxFlash.setAndSaveParams(protocolParams);
 
 %% Make the temporal modulations for experiment
 [modulationsCellArray,temporalParams] = MRMaxFlash.makeTemporalModulations(modDirection,background,protocolParams);

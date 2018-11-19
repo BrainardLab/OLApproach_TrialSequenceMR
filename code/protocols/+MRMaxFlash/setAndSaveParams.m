@@ -1,4 +1,4 @@
-function [protocolParams,modDirection,modBackground, ol, directions]  = setAndSaveParams(protocolParams)
+function [protocolParams,modDirection,modBackground, ol]  = setAndSaveParams(protocolParams)
 
 
 % setAndSaveParams
@@ -64,7 +64,7 @@ protocolParams.isiTime = 0;
 % or it is a minimum contrast decrement, etc.  Would have to worry about how
 % to handle this if that assumption is not valid.
 protocolParams.attentionTask = true;
-protocolParams.attentionSegmentDuration = 4;
+protocolParams.attentionSegmentDuration = 12;
 protocolParams.attentionEventDuration = 0.5;
 protocolParams.attentionMarginDuration = 1;
 protocolParams.attentionEventProb = 1/100;
@@ -120,7 +120,7 @@ fprintf('\tDevice native half on xyY: %0.3f %0.3f %0.1f\n',nativexyY(1),nativexy
 
 %% Set target xyY for background.
 %
-% Here we use the native half one, but you can type in what you want.
+% Here we use the native half on, but you can type in what you want.
 targetxyY = nativexyY;
 fprintf('\tUsing target background xyY: %0.3f %0.3f %0.01\n',targetxyY(1),targetxyY(2),targetxyY(3));
 
@@ -139,126 +139,28 @@ if ~exist(modulationSavePath)
 end
 
 modulationSaveName = fullfile(modulationSavePath,'scanParamters.mat');
-save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams');
+save(modulationSaveName,'cal','observerParams','protocolParams');
 
 
 %% Open the OneLight
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
 
-%% Let user get the radiometer set up
-if protocolParams.simulate.radiometer
-    radiometer = [];
-else
-    radiometerPauseDuration = 0;
-    ol.setAll(true);
-    commandwindow;
-    fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
-    input('');
-    ol.setAll(false);
-    pause(radiometerPauseDuration);
-    radiometer = OLOpenSpectroRadiometerObj('PR-670');
-end
 
+% Background is one-half full on (all mirrors on)
+modBackground = 0.5 .* OLDirection_unipolar.FullOn(cal);
 
-lightFluxDirectionParams = OLDirectionParamsFromName('LightFlux_450_450_18','alternateDictionaryFunc','OLDirectionParamsDictionary_MR');
-lightFluxDirectionParams.primaryHeadRoom = .00;
-[modDirection, modBackground] = OLDirectionNominalFromParams(lightFluxDirectionParams, calibration,'alternateBackgroundDictionaryFunc','OLBackgroundParamsDictionary_MR');
-
+% The modulation direction is simply the positive and negative of the
+% half-on background, thus specifying a light-flux modulation (with the
+% exception of the small imperfection introduced by the non-zero ambient
+% light in the all-off background).
+modDirection = OLDirection_bipolar( ...
+    modBackground.differentialPrimaryValues, ...
+    -modBackground.differentialPrimaryValues, ...
+    cal);
 
 
 modDirection.describe.observerAge = protocolParams.observerAge;
-modDirection.describe.photoreceptorClasses = modDirection.describe.directionParams.photoreceptorClasses;
-modDirection.describe.T_receptors = modDirection.describe.directionParams.T_receptors;
-
-
-fprintf('*\tStarting Valiadtion: pre-corrections\n');
-
-if ~(protocolParams.simulate.oneLight)
-    takeTemperatureMeasurements = true;
-else
-    takeTemperatureMeasurements = false;
-end
-
-%takeTemperatureMeasurements = GetWithDefault('Take Temperature Measurements ?', false);
-if (takeTemperatureMeasurements ~= true) && (takeTemperatureMeasurements ~= 1)
-    takeTemperatureMeasurements = false;
-else
-    takeTemperatureMeasurements = true;
-end
-
-if (takeTemperatureMeasurements)
-    % Gracefully attempt to open the LabJack
-    [takeTemperatureMeasurements, quitNow, theLJdev] = OLCalibrator.OpenLabJackTemperatureProbe(takeTemperatureMeasurements);
-    if (quitNow)
-        return;
-    end
-else
-    theLJdev = [];
-end
-measureStateTrackingSPDs = true;
 
 
 
-T_receptors = modDirection.describe.directionParams.T_receptors; % the T_receptors will be the same for each direction, so just grab one
-for ii = 1:protocolParams.nValidationsPerDirection
-    
-    OLValidateDirection(modDirection, background, ol, radiometer, ...
-        'receptors', T_receptors, 'label', 'precorrection', ...
-        'temperatureProbe', theLJdev, ...
-        'measureStateTrackingSPDs', measureStateTrackingSPDs);
-    postreceptoralContrast = ComputePostreceptoralContrastsFromLMSContrasts(modDirection.describe.validation(ii).contrastActual(1:3,1));
-    modDirection.describe.validation(ii).postreceptoralContrastActual = postreceptoralContrast;
-    if ~(protocolParams.simulate.radiometer)
-        save(fullfile(savePath, 'MaxMelDirection.mat'), 'MaxMelDirection');
-        save(fullfile(savePath, 'MaxMelBackground.mat'), 'MaxMelBackground');
-    end
-end
-%% Correction direction, validate post correction
-fprintf('*\tStarting Corrections\n');
-lightlevelScalar = OLMeasureLightlevelScalar(ol, cal, radiometer);
-
-if ~(protocolParams.simulate.radiometer)
-    % only correct if we're not simulating the radiometer
-    nullDirection = OLDirection_unipolar.Null(calibration);
-    OLCorrectDirection(background, nullDirection, ol, radiometer, ...
-        'smoothness', 0.1, ...
-        'temperatureProbe', theLJdev, ...
-        'measureStateTrackingSPDs', measureStateTrackingSPDs);
-    OLCorrectDirection(modDirection, background, ol, radiometer, ...
-        'smoothness', 0.1, ...
-        'temperatureProbe', theLJdev, ...
-        'measureStateTrackingSPDs', measureStateTrackingSPDs);
-    for ii = length(modDirection.describe.validation)+1:length(modDirection.describe.validation)+protocolParams.nValidationsPerDirection
-        OLValidateDirection(modDirection, background, ol, radiometer, ...
-            'receptors', T_receptors, 'label', 'postcorrection', ...
-            'temperatureProbe', theLJdev, ...
-            'measureStateTrackingSPDs', measureStateTrackingSPDs);
-        postreceptoralContrast = ComputePostreceptoralContrastsFromLMSContrasts(modDirection.describe.validation(ii).contrastActual(1:3,1));
-        modDirection.describe.validation(ii).postreceptoralContrastActual = postreceptoralContrast;
-        if ~(protocolParams.simulate.radiometer)
-            
-            save(fullfile(savePath, 'MaxMelDirection.mat'), 'MaxMelDirection');
-            save(fullfile(savePath, 'MaxMelBackground.mat'), 'MaxMelBackground');
-        end
-    end
-end
-
-
-
-%% Save Corrected Primaries:
-correctedSavePath = fullfile(getpref('MRMaxFlash','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~exist(correctedSavePath)
-    mkdir(correctedSavePath)
-end
-modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
-save(modulationSaveName,'MaxMelDirection','MaxMelBackground');
-
-
-
-%% Close PR-670
-if exist('radiometer', 'var')
-    try
-        radiometer.shutDown
-    end
-end
-
+end 

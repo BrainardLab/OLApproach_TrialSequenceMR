@@ -9,7 +9,7 @@ temporalParams = OLWaveformParamsFromName('MaxContrastSinusoid');
 temporalParams.frequency = 16;
 temporalParams.stimulusDuration = 12; % in sec
 temporalParams.timeStep = 1/100;
-[waveforms,timestep]=OLWaveformFromParams(temporalParams);
+waveforms = OLWaveformFromParams(temporalParams);
 
 % First make the trial type that has maximal flicker
 flickerModulation = OLAssembleModulation([modBackground, modDirection],[ones(size(waveforms)); waveforms]);
@@ -19,10 +19,10 @@ emptyModulation = OLAssembleModulation([modBackground, modDirection], [ones(size
 
 % Now create a third entry that is the background state to be used before
 % and after the experiment
-[tempCell.backgroundStarts, tempCell.backgroundStops] =OLPrimaryToStartsStops(modBackground.differentialPrimaryValues,modBackground.calibration);
+[backgroundState.backgroundStarts, backgroundState.backgroundStops] =OLPrimaryToStartsStops(modBackground.differentialPrimaryValues,modBackground.calibration);
 
 % Assemble the three types into a single cell array
-modulationsCellArray = [flickerModulation, emptyModulation, repmat({tempCell},1,1)];
+modulationsCellArray = {flickerModulation, emptyModulation, backgroundState};
 
 
 %% Save modulations
@@ -31,7 +31,6 @@ if ~exist(modulationSavePath)
     mkdir(modulationSavePath)
 end
 modulationSaveName = fullfile(modulationSavePath,'modulations.mat');
-save(modulationSaveName,'modulationsCellArray','pulseParams','protocolParams','MaxMelDirection');
-
+save(modulationSaveName,'modulationsCellArray','temporalParams');
 
 
