@@ -42,9 +42,12 @@ switch userID
     case {'melanopsin' 'pupillab'}
         materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_data/'];
+    case {'ldogexperimenter'}
+        materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
+        dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/LDOG_data/'];
     case {'dhb'}
         materialsBasePath = ['/Users1'  '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
-        dataBasePath = ['/Users1' '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/']; 
+        dataBasePath = ['/Users1' '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/'];
     case {'michael'}
         materialsBasePath = ['/Users1'  '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
         dataBasePath = ['/Users1' '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/'];
@@ -59,7 +62,7 @@ end
 %% Set prefs for materials and data
 setpref(theApproach,'MaterialsPath',fullfile(materialsBasePath));
 setpref(theApproach,'DataPath',fullfile(dataBasePath));
-   
+
 %% Set pref to point at the code for this approach
 setpref(theApproach,'CodePath', fullfile(tbLocateProject(theApproach),'code'));
 
