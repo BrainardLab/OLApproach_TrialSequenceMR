@@ -67,7 +67,7 @@ protocolParams.attentionTask = true;
 protocolParams.attentionSegmentDuration = 12;
 protocolParams.attentionEventDuration = 0.5;
 protocolParams.attentionMarginDuration = 1;
-protocolParams.attentionEventProb = 1/100;
+protocolParams.attentionEventProb = 1/10000;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
