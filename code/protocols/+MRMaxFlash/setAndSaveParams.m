@@ -1,4 +1,4 @@
-function [protocolParams,modDirection,modBackground, ol]  = setAndSaveParams(protocolParams)
+function [protocolParams,modDirection,modBackground, nullDirection, ol]  = setAndSaveParams(protocolParams)
 
 
 % setAndSaveParams
@@ -157,6 +157,8 @@ modDirection = OLDirection_bipolar( ...
     modBackground.differentialPrimaryValues, ...
     -modBackground.differentialPrimaryValues, ...
     cal);
+
+nullDirection = OLDirection_unipolar.Null(cal);
 
 
 modDirection.describe.observerAge = protocolParams.observerAge;

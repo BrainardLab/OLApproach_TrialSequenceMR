@@ -9,7 +9,7 @@ protocolParams.protocol = 'MRMaxFlash';
 protocolParams.protocolOutputName = 'MRMaxFlash';
 protocolParams.emailRecipient = 'huseyinozenc.taskin@pennmedicine.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
+protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = true;
 protocolParams.simulate.radiometer = true;
 
@@ -17,10 +17,10 @@ protocolParams.simulate.radiometer = true;
 
 
 %% Set up all the parameters and make Modulations
-[protocolParams,modDirection,background, ol] = MRMaxFlash.setAndSaveParams(protocolParams);
+[protocolParams,modDirection,background, nullDirection, ol] = MRMaxFlash.setAndSaveParams(protocolParams);
 
 %% Make the temporal modulations for experiment
-[modulationsCellArray,temporalParams] = MRMaxFlash.makeTemporalModulations(modDirection,background,protocolParams);
+[modulationsCellArray,temporalParams] = MRMaxFlash.makeTemporalModulations(modDirection,background,nullDirection,protocolParams);
 
 %% Make trial order
 protocolParams = MRMaxFlash.makeTrialOrder(protocolParams);
@@ -29,4 +29,4 @@ protocolParams = MRMaxFlash.makeTrialOrder(protocolParams);
 ApproachEngine(ol,protocolParams,modulationsCellArray,temporalParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Post-Experiemnt Validations. 
-MRMaxFlash.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,modDirection,background,directions);
+%MRMaxFlash.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,modDirection,background,directions);

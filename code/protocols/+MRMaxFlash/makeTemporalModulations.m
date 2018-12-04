@@ -1,4 +1,4 @@
-function [modulationsCellArray,temporalParams] = makeTemporalModulations(modDirection,modBackground,protocolParams)
+function [modulationsCellArray,temporalParams] = makeTemporalModulations(modDirection,modBackground,nullDirection, protocolParams)
 
 
 
@@ -15,11 +15,11 @@ waveforms = OLWaveformFromParams(temporalParams);
 flickerModulation = OLAssembleModulation([modBackground, modDirection],[ones(size(waveforms)); waveforms]);
 
 % Now make a trial type with 0% contrast and thus no flicker
-emptyModulation = OLAssembleModulation([modBackground, modDirection], [ones(size(waveforms)); zeros(size(waveforms))]);
+emptyModulation = OLAssembleModulation([nullDirection, modDirection], [ones(size(waveforms)); zeros(size(waveforms))]);
 
 % Now create a third entry that is the background state to be used before
 % and after the experiment
-[backgroundState.backgroundStarts, backgroundState.backgroundStops] =OLPrimaryToStartsStops(modBackground.differentialPrimaryValues,modBackground.calibration);
+[backgroundState.backgroundStarts, backgroundState.backgroundStops] =OLPrimaryToStartsStops(nullDirection.differentialPrimaryValues,modBackground.calibration);
 
 % Assemble the three types into a single cell array
 modulationsCellArray = {flickerModulation, emptyModulation, backgroundState};
