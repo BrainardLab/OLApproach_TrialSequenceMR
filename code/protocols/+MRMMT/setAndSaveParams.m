@@ -1,4 +1,4 @@
-function [protocolParams,trialTypeParams,MaxMelDirection,MaxMelBackground, ol, directions]  = setAndSaveParams(protocolParams)
+function [protocolParams,MaxMelDirection,MaxMelBackground, ol]  = setAndSaveParams(protocolParams)
 
 
 % setAndSaveParams
@@ -11,7 +11,8 @@ function [protocolParams,trialTypeParams,MaxMelDirection,MaxMelBackground, ol, d
 
 
 %% Trial type information.
-
+% the param contrastLevels is used to scale the contrast for a given
+% direction. we'll want all max contrast, so keep everything at 1.
 trialTypeParams.contrastLevels = [1];
 
 % Number of trials
@@ -77,8 +78,6 @@ protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
 %% Validation parameters
-% [* NOTE: DHB, MB: Need a pre-reg document. We have a standard that we use
-%    with respect to validations.  Ask Harry for the language.]
 protocolParams.nValidationsPerDirection = 5;
 
 %% Information we prompt for and related
@@ -135,13 +134,13 @@ protocolParams = OLSessionLog(protocolParams,'OLSessionInit');
 %% At this point, we have all the parameters for today.
 %
 % SAVE PARMETERS INTO Parameters DATA TREE
-modulationSavePath = fullfile(getpref('MRMMT','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~exist(modulationSavePath)
-    mkdir(modulationSavePath)
+paramsSavePath = fullfile(getpref('MRMMT','parameterFilesBasePath'),protocolParams.observerID,protocolParams.todayDate);
+if ~exist(paramsSavePath)
+    mkdir(paramsSavePath)
 end
 
-modulationSaveName = fullfile(modulationSavePath,'scanParamters.mat');
-save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams');
+paramsSaveName = fullfile(paramsSavePath,'scanParamters.mat');
+save(paramsSaveName,'cal','observerParams','protocolParams');
 
 
 %% Open the OneLight
@@ -184,60 +183,32 @@ receptorStrings = MaxMelDirection.describe.directionParams.photoreceptorClasses;
 fieldSizes = [MaxMelDirection.describe.directionParams.fieldSizeDegrees, MaxMelDirection.describe.directionParams.fieldSizeDegrees, MaxMelDirection.describe.directionParams.fieldSizeDegrees, MaxMelDirection.describe.directionParams.fieldSizeDegrees];
 protocolParams.receptors = GetHumanPhotoreceptorSS(MaxMelDirection.calibration.describe.S,receptorStrings,fieldSizes,protocolParams.observerAge,6,[],[]);
 
-directions{1} = 'MaxMel_chrom_unipolar_600_80_4000';
-% Loop and report
-for dd = 1:length(directions)
-    % Hello for this direction
-    fprintf('<strong>%s</strong>\n', directions{dd});
-    
-    % Get contrasts. Code assumes matched naming of direction and background objects,
-    % so that the string substitution works to get the background object
-    % from the direction object.
-    direction = MaxMelDirection;
-    background = MaxMelBackground;
-    [~, excitations, excitationDiffs] = direction.ToDesiredReceptorContrast(background,protocolParams.receptors);
-    
-    % Grab the relevant contrast information from the OLDirection object an
-    % and report. Keep pos and neg contrast explicitly separate. These
-    % should match in magnitude but be flipped in sign.
-    for j = 1:size(protocolParams.receptors,1)
-        fprintf('  * <strong>%s, %0.1f degrees</strong>: contrast pos = %0.1f, neg = %0.1f%%\n',receptorStrings{j},fieldSizes(j),100*excitationDiffs(j,1)/excitations(j,1),100*excitationDiffs(j,2)/excitations(j,1));
-    end
-    
-    % Chromaticity and luminance
-    backgroundxyY = XYZToxyY(T_xyz*OLPrimaryToSpd(cal,background.differentialPrimaryValues));
-    fprintf('\n');
-    fprintf('   * <strong>Background x, y, Y</strong>: %0.3f, %0.3f, %0.1f cd/m2\n',backgroundxyY(1),backgroundxyY(2),backgroundxyY(3));
-    
-    fprintf('\n\n');
+
+% Hello for this direction
+fprintf('<strong>MaxMel_chrom_unipolar_600_80_4000</strong>\n');
+
+% Get contrasts. Code assumes matched naming of direction and background objects,
+% so that the string substitution works to get the background object
+% from the direction object.
+direction = MaxMelDirection;
+background = MaxMelBackground;
+[~, excitations, excitationDiffs] = direction.ToDesiredReceptorContrast(background,protocolParams.receptors);
+
+% Grab the relevant contrast information from the OLDirection object an
+% and report. Keep pos and neg contrast explicitly separate. These
+% should match in magnitude but be flipped in sign.
+for j = 1:size(protocolParams.receptors,1)
+    fprintf('  * <strong>%s, %0.1f degrees</strong>: contrast pos = %0.1f, neg = %0.1f%%\n',receptorStrings{j},fieldSizes(j),100*excitationDiffs(j,1)/excitations(j,1),100*excitationDiffs(j,2)/excitations(j,1));
 end
 
-%% Save Nominal Primaries:
-%nominalSavePath = fullfile(getpref('MRContrastResponseFunction','DirectionNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
-% if ~exist(nominalSavePath)
-%     mkdir(nominalSavePath)
-% end
-% modulationSaveName = fullfile(nominalSavePath,'nominalPrimaries.mat');
-% save(modulationSaveName,'colorDirection','ConeDirectedBackground');
+% Chromaticity and luminance
+backgroundxyY = XYZToxyY(T_xyz*OLPrimaryToSpd(cal,background.differentialPrimaryValues));
+fprintf('\n');
+fprintf('   * <strong>Background x, y, Y</strong>: %0.3f, %0.3f, %0.1f cd/m2\n',backgroundxyY(1),backgroundxyY(2),backgroundxyY(3));
+
+fprintf('\n\n');
 
 %% Validate pre-correction
-% [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
-%          straight? b) What is the idea about how we store this aspect of
-%          the data.  Just write out the direciton and background objects
-%          at this stage?]
-% [* NOTE: JV: Reply: a) I've added the kwarg 'label', which can take any
-%          string/charvector as label. I've named these 'pre-correction'
-%          and 'post-correction'. The validation struct also stores the
-%          actual (differential) primary values that it validated, so
-%          that's another way to check whether validation is pre/post
-%          correction.
-%          b) Saving out the direction and background objects will save out
-%          the validations stored in them as well. You can also extract the
-%          validation struct from the object, or by taking it as an output
-%          argument from OLValidateDirection.]
-% [* NOTE: Add loop here for number of validations]
-
-
 fprintf('*\tStarting Valiadtion: pre-corrections\n');
 
 if ~(protocolParams.simulate.oneLight)
@@ -275,11 +246,15 @@ for ii = 1:protocolParams.nValidationsPerDirection
         'measureStateTrackingSPDs', measureStateTrackingSPDs);
     postreceptoralContrast = ComputePostreceptoralContrastsFromLMSContrasts(MaxMelDirection.describe.validation(ii).contrastActual(1:3,1));
     MaxMelDirection.describe.validation(ii).postreceptoralContrastActual = postreceptoralContrast;
-    if ~(protocolParams.simulate.radiometer)
-        save(fullfile(savePath, 'MaxMelDirection.mat'), 'MaxMelDirection');
-        save(fullfile(savePath, 'MaxMelBackground.mat'), 'MaxMelBackground');
-    end
 end
+
+directionObjectSavePath = fullfile(getpref('MRMMT','DirectionObjectsBasePath'),protocolParams.observerID,[protocolParams.todayDate, '_' protocolParams.sessionName]);
+if ~exist(directionObjectSavePath)
+    mkdir(directionObjectSavePath)
+end
+directionSaveName = fullfile(directionObjectSavePath,'MaxMel.mat');
+save(directionSaveName,'MaxMelDirection','MaxMelBackground');
+
 %% Correction direction, validate post correction
 fprintf('*\tStarting Corrections\n');
 lightlevelScalar = OLMeasureLightlevelScalar(ol, cal, radiometer);
@@ -302,23 +277,18 @@ if ~(protocolParams.simulate.radiometer)
             'measureStateTrackingSPDs', measureStateTrackingSPDs);
         postreceptoralContrast = ComputePostreceptoralContrastsFromLMSContrasts(MaxMelDirection.describe.validation(ii).contrastActual(1:3,1));
         MaxMelDirection.describe.validation(ii).postreceptoralContrastActual = postreceptoralContrast;
-        if ~(protocolParams.simulate.radiometer)
-            
-            save(fullfile(savePath, 'MaxMelDirection.mat'), 'MaxMelDirection');
-            save(fullfile(savePath, 'MaxMelBackground.mat'), 'MaxMelBackground');
-        end
     end
 end
 
 
 
 %% Save Corrected Primaries:
-correctedSavePath = fullfile(getpref('MRMMT','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~exist(correctedSavePath)
-    mkdir(correctedSavePath)
+directionObjectSavePath = fullfile(getpref('MRMMT','DirectionObjectsBasePath'),protocolParams.observerID,[protocolParams.todayDate, '_' protocolParams.sessionName]);
+if ~exist(directionObjectSavePath)
+    mkdir(directionObjectSavePath)
 end
-modulationSaveName = fullfile(correctedSavePath,'correctedPrimaries.mat');
-save(modulationSaveName,'MaxMelDirection','MaxMelBackground');
+directionSaveName = fullfile(directionObjectSavePath,'MaxMel.mat');
+save(directionSaveName,'MaxMelDirection','MaxMelBackground');
 
 
 
@@ -328,4 +298,6 @@ if exist('radiometer', 'var')
         radiometer.shutDown
     end
 end
+
+end % end function
 

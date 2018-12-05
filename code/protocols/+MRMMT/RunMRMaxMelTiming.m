@@ -14,17 +14,16 @@ protocolParams.simulate.makePlots = true;
 protocolParams.simulate.radiometer = true;
 
 %% Set up all the parameters and make Modulations
-[protocolParams,trialTypeParams,MaxMelDirection,MaxMelBackground, ol, directions]  = MRMMT.setAndSaveParams(protocolParams);
+[protocolParams,MaxMelDirection,MaxMelBackground, ol]  = MRMMT.setAndSaveParams(protocolParams);
 
 %% Make the temporal modulations for experiment
-[modulationsCellArray,pulseParams] = MRMMT.makeTemporalModulations(MaxMelDirection,MaxMelBackground,trialTypeParams,protocolParams);
+[modulationsCellArray,pulseParams] = MRMMT.makeTemporalModulations(MaxMelDirection,MaxMelBackground,protocolParams);
 
 %% Make trial order
-
-protocolParams = MRMMT.makeTrialOrder(protocolParams, modulationsCellArray);
+protocolParams = MRMMT.makeTrialOrder(protocolParams);
 
 %% Run the experiment.
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Post-Experiemnt Validations. 
-MRMMT.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,MaxMelDirection,MaxMelBackground,directions);
+MRMMT.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,MaxMelDirection,MaxMelBackground);

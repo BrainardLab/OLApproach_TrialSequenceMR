@@ -1,4 +1,4 @@
-function [modulationsCellArray,pulseParams] = makeTemporalModulations(MaxMelDirection,MaxMelBackground,trialTypeParams,protocolParams)
+function [modulationsCellArray,pulseParams] = makeTemporalModulations(MaxMelDirection,MaxMelBackground,protocolParams)
 
 
 
@@ -31,6 +31,8 @@ if ~exist(modulationSavePath)
 end
 modulationSaveName = fullfile(modulationSavePath,'modulations.mat');
 save(modulationSaveName,'modulationsCellArray','pulseParams','protocolParams','MaxMelDirection');
+
+end
 
 
 

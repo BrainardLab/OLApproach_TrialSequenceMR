@@ -1,4 +1,4 @@
-function [] = postExpValidation(numValidations,protocolParams,ol,directedDirection,background,directions)
+function [] = postExpValidation(numValidations,protocolParams,ol,MaxMelDirection,MaxMelBackground)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -16,35 +16,58 @@ else
 end
 
 
-for jj = 1:length(directedDirection)
-    switch directions{jj}
-        case 'ConeDirectedDirection1'
-            directionType = 'LminusM';
-        case 'ConeDirectedDirection2'
-            directionType = 'LplusM';
-        case 'ConeDirectedDirection3'
-            directionType = 'LIsolating';
-        case 'ConeDirectedDirection4'
-            directionType = 'MIsolating';
+if ~(protocolParams.simulate.oneLight)
+    takeTemperatureMeasurements = true;
+else
+    takeTemperatureMeasurements = false;
+end
+
+%takeTemperatureMeasurements = GetWithDefault('Take Temperature Measurements ?', false);
+if (takeTemperatureMeasurements ~= true) && (takeTemperatureMeasurements ~= 1)
+    takeTemperatureMeasurements = false;
+else
+    takeTemperatureMeasurements = true;
+end
+
+if (takeTemperatureMeasurements)
+    % Gracefully attempt to open the LabJack
+    [takeTemperatureMeasurements, quitNow, theLJdev] = OLCalibrator.OpenLabJackTemperatureProbe(takeTemperatureMeasurements);
+    if (quitNow)
+        return;
     end
-    for ii = 1:numValidations
-        OLValidateDirection(directedDirection{jj},background,ol,radiometer,'receptors', protocolParams.receptors , 'label', ['post-experiment-', directionType]);
-    end
+else
+    theLJdev = [];
+end
+measureStateTrackingSPDs = true;
+
+
+
+T_receptors = MaxMelDirection.describe.directionParams.T_receptors; % the T_receptors will be the same for each direction, so just grab one
+for ii = length(MaxMelDirection.describe.validation)+1:length(MaxMelDirection.describe.validation)+protocolParams.nValidationsPerDirection
+    
+    OLValidateDirection(MaxMelDirection, MaxMelBackground, ol, radiometer, ...
+        'receptors', T_receptors, 'label', 'postexperiment', ...
+        'temperatureProbe', theLJdev, ...
+        'measureStateTrackingSPDs', measureStateTrackingSPDs);
+    postreceptoralContrast = ComputePostreceptoralContrastsFromLMSContrasts(MaxMelDirection.describe.validation(ii).contrastActual(1:3,1));
+    MaxMelDirection.describe.validation(ii).postreceptoralContrastActual = postreceptoralContrast;
 end
 
 
 
 %% Save post experiment validations:
-correctedSavePath = fullfile(getpref('MRMMT','DirectionCorrectedValidationBasePath'),protocolParams.observerID,protocolParams.todayDate);
-if ~exist(correctedSavePath)
-    mkdir(correctedSavePath)
+directionObjectSavePath = fullfile(getpref('MRMMT','DirectionObjectsBasePath'),protocolParams.observerID,[protocolParams.todayDate, '_' protocolParams.sessionName]);
+if ~exist(directionObjectSavePath)
+    mkdir(directionObjectSavePath)
 end
-modulationSaveName = fullfile(correctedSavePath,'postExpValidations.mat');
-save(modulationSaveName,'directedDirection','background');
+directionSaveName = fullfile(directionObjectSavePath,'MaxMel.mat');
+save(directionSaveName,'MaxMelDirection','MaxMelBackground');
 
 %% Close PR-670
 if exist('radiometer', 'var')
     try
         radiometer.shutDown
     end
+end
+
 end
