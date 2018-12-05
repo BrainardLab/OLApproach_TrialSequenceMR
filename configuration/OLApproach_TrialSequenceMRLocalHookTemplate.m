@@ -83,6 +83,13 @@ for pp = 1:length(theProtocols)
     
     setpref(theProtocols{pp},'DirectionCorrectedPrimariesBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'DirectionCorrectedPrimaries'));
     
+    % Set path to save direction objects. note that since we can label each
+    % validation measurement, there's no need to create different folders
+    % for saving out different measurements (pre or post-experiment, for
+    % example)
+    setpref(theProtocols{pp},'DirectionObjectsBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'DirectionObjects'));
+
+    
     % Set the validation base path
     setpref(theProtocols{pp},'DirectionCorrectedValidationBasePath',fullfile(getpref(theApproach, 'DataPath'),'Experiments',theApproach,theProtocols{pp},'DirectionValidationFiles'));
     
