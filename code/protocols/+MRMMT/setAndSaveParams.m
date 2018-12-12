@@ -75,7 +75,7 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 protocolParams.boxName = 'BoxD';
 protocolParams.calibrationType = 'BoxDRandomizedLongCableDStubbyEyePiece1_ND00';
 protocolParams.takeCalStateMeasurements = true;
-protocolParams.takeTempearatureMeasurements = true;
+protocolParams.takeTempearatureMeasurements = false;
 
 %% Validation parameters
 protocolParams.nValidationsPerDirection = 5;
@@ -212,7 +212,7 @@ fprintf('\n\n');
 fprintf('*\tStarting Valiadtion: pre-corrections\n');
 
 if ~(protocolParams.simulate.oneLight)
-    takeTemperatureMeasurements = true;
+    takeTemperatureMeasurements = false;
 else
     takeTemperatureMeasurements = false;
 end
@@ -221,7 +221,7 @@ end
 if (takeTemperatureMeasurements ~= true) && (takeTemperatureMeasurements ~= 1)
     takeTemperatureMeasurements = false;
 else
-    takeTemperatureMeasurements = true;
+    takeTemperatureMeasurements = false;
 end
 
 if (takeTemperatureMeasurements)
