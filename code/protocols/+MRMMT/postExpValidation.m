@@ -1,4 +1,4 @@
-function [] = postExpValidation(numValidations,protocolParams,ol,MaxMelDirection,MaxMelBackground)
+function [] = postExpValidation(protocolParams,ol,MaxMelDirection,MaxMelBackground)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -17,7 +17,7 @@ end
 
 
 if ~(protocolParams.simulate.oneLight)
-    takeTemperatureMeasurements = true;
+    takeTemperatureMeasurements = false;
 else
     takeTemperatureMeasurements = false;
 end
@@ -26,7 +26,7 @@ end
 if (takeTemperatureMeasurements ~= true) && (takeTemperatureMeasurements ~= 1)
     takeTemperatureMeasurements = false;
 else
-    takeTemperatureMeasurements = true;
+    takeTemperatureMeasurements = false;
 end
 
 if (takeTemperatureMeasurements)
