@@ -9,8 +9,8 @@ protocolParams.protocol = 'MRMMT';
 protocolParams.protocolOutputName = 'MMT';
 protocolParams.emailRecipient = 'hmcadams@sas.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = true;
+protocolParams.simulate.oneLight = false;
+protocolParams.simulate.makePlots = false;
 protocolParams.simulate.radiometer = true;
 
 %% Set up all the parameters and make Modulations
@@ -26,4 +26,4 @@ protocolParams = MRMMT.makeTrialOrder(protocolParams);
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 
 %% Post-Experiemnt Validations. 
-MRMMT.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,MaxMelDirection,MaxMelBackground);
+MRMMT.postExpValidation(protocolParams,ol,MaxMelDirection,MaxMelBackground);
