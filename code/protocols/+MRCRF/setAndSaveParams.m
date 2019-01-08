@@ -92,8 +92,7 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 %% OneLight parameters
 protocolParams.boxName = 'BoxD';
 protocolParams.calibrationType = 'BoxDRandomizedLongCableDStubbyEyePiece1_ND00';
-protocolParams.takeCalStateMeasurements = true;
-protocolParams.takeTempearatureMeasurements = true;
+
 
 %% Validation parameters
 % [* NOTE: DHB, MB: Need a pre-reg document. We have a standard that we use

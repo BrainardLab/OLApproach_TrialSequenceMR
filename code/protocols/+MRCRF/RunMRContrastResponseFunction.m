@@ -9,9 +9,11 @@ protocolParams.protocol = 'MRCRF';
 protocolParams.protocolOutputName = 'CRF';
 protocolParams.emailRecipient = 'micalan@sas.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
+protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = false;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.radiometer = false;
+protocolParams.takeCalStateMeasurements = true;
+protocolParams.takeTempearatureMeasurements = true;
 
 %% Set up all the parameters and make Modulations
 % [ *NOTE: MB: I plan on making this a more robust function that will
