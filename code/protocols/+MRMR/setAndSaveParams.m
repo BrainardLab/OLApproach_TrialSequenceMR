@@ -72,8 +72,8 @@ protocolParams.attentionEventProb = 1/100;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
-protocolParams.boxName = 'BoxB';
-protocolParams.calibrationType = 'BoxBRandomizedLongCableAStubbyEyePiece1ND00';
+protocolParams.boxName = 'BoxA';
+protocolParams.calibrationType = 'BoxARandomizedLongCableAStubbyEyePiece_ND00';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = false;
 
