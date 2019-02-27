@@ -79,9 +79,6 @@ dictionary = containers.Map();
 
 %% MaxMel_chrom_unipolar_600_80_4000
 % Direction for maximum unipolar contrast Mel step
-%   Field size: 27.5 deg
-%   Pupil diameter: 6 mm
-%   Unipolar contrast: 400%
 
 params = OLDirectionParams_Unipolar;
 params.baseName = 'MaxMel_chrom';
