@@ -15,7 +15,10 @@ protocolParams.simulate.radiometer = true;
 
 %% Set up all the parameters and make Modulations
 [protocolParams,MaxMelDirection,MaxMelBackground,LMSDirection,LMSBackground,ol]  = MRMR.setAndSaveParams(protocolParams);
-
+plotFig = figure;
+summarizeValidation(LMSDirection);
+plotFig = figure;
+summarizeValidation(MaxMelDirection);
 %% Make the temporal modulations for experiment
 [melModulationsCellArray, LMSModulationsCellArray, pulseParams] = MRMR.makeTemporalModulations(MaxMelDirection,MaxMelBackground,LMSDirection,LMSBackground,protocolParams);
 
