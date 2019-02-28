@@ -6,7 +6,7 @@ function [melModulationsCellArray, LMSModulationsCellArray, pulseParams] = makeT
 %
 % Make temporal waveform for my experiment
 pulseParams = OLWaveformParamsFromName('MaxContrastPulse'); % get generic pulse parameters
-pulseParams.stimulusDuration = 1; % 1 second pulses
+pulseParams.stimulusDuration = 2; % 1 second pulses
 [PulseWaveform, pulseTimestep] = OLWaveformFromParams(pulseParams); % 4 second pulse waveform max contrast
 
 

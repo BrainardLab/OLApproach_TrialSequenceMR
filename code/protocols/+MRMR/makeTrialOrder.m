@@ -31,7 +31,7 @@ p.parse(varargin{:});
 blockLength = 24;
 nBlocks = 12;
 trialsPerBlock = blockLength/protocolParams.trialDuration;
-blockStructure = [ones(1,blockLength/2)*2, ones(1,blockLength/2)]; % each block will be background trials, followed by stimulus trials
+blockStructure = [ones(1,trialsPerBlock/2)*2, ones(1,trialsPerBlock/2)]; % each block will be background trials, followed by stimulus trials
 protocolParams.trialTypeOrder = repmat(blockStructure, 1, nBlocks); %2s are for the second item in the modulationCellArray, which is the empty trial. 1s are the pulses
 protocolParams.trialTypeOrder(2,:) = ones(1,length(protocolParams.trialTypeOrder));
 

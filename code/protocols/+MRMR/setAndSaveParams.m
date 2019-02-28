@@ -18,7 +18,7 @@ trialTypeParams.contrastLevels = [1];
 % Number of trials
 %
 % Should be an integer multiple of number of trial types
-protocolParams.nTrials = 288;
+protocolParams.nTrials = 144;
 protocolParams.contrastLevels = ones(1,protocolParams.nTrials);
 
 
@@ -38,7 +38,7 @@ protocolParams.observerParams = observerParams;
 %% Trial timing parameters.
 %
 % Trial duration - total time for each trial.
-protocolParams.trialDuration = 1;
+protocolParams.trialDuration = 2;
 
 % There is a minimum time at the start of each trial where
 % the background is presented.  Then the actual trial
@@ -65,9 +65,9 @@ protocolParams.isiTime = 0;
 % or it is a minimum contrast decrement, etc.  Would have to worry about how
 % to handle this if that assumption is not valid.
 protocolParams.attentionTask = true;
-protocolParams.attentionSegmentDuration = 1;
+protocolParams.attentionSegmentDuration = 2;
 protocolParams.attentionEventDuration = 0.25;
-protocolParams.attentionMarginDuration = 0.4;
+protocolParams.attentionMarginDuration = 0.75;
 protocolParams.attentionEventProb = 1/100;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 
