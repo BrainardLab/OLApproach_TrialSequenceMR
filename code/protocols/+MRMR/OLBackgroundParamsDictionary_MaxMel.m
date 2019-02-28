@@ -113,14 +113,15 @@ end
 %   Pupil diameter: 6 mm
 %   Unipolar contrast: 400%
 params = OLBackgroundParams_Optimized;
-params.baseName = 'LMSDirected_chrom';
-params.baseModulationContrast = 2;
+%params.baseName = 'LMSDirected_chrom';
+params.baseName = 'LMS';
+params.baseModulationContrast = 4;
 params.fieldSizeDegrees = 60;
 params.pupilDiameterMm = 8;
 params.photoreceptorClasses = {'LConeTabulatedAbsorbance','MConeTabulatedAbsorbance','SConeTabulatedAbsorbance','Melanopsin'};
 
 % These are the options that go to OLPrimaryInvSolveChrom
-params.desiredxy = [0.574, 0.364];
+params.desiredxy = [0.57, 0.36];
 %params.desiredLum = 161.1;
 params.whichXYZ = 'xyzCIEPhys10';
 params.targetContrast = [params.baseModulationContrast params.baseModulationContrast params.baseModulationContrast 0];

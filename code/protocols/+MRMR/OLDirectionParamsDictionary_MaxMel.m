@@ -114,12 +114,13 @@ end
 %   Unipolar contrast: 400%
 
 params = OLDirectionParams_Unipolar;
-params.baseName = 'LMS_chrom';
-params.baseModulationContrast = 2;
+%params.baseName = 'LMS_chrom';
+params.baseName = 'LMS';
+params.baseModulationContrast = 4;
 params.fieldSizeDegrees = 60;
 params.pupilDiameterMm = 8.0;
 params.photoreceptorClasses = {'LConeTabulatedAbsorbance','MConeTabulatedAbsorbance','SConeTabulatedAbsorbance','Melanopsin'};
-params.backgroundName = 'LMSDirected_chrom_600_80_2000';
+params.backgroundName = 'LMS_600_80_4000';
 
 % These are the options that go to OLPrimaryInvSolveChrom
 params.targetContrast = [params.baseModulationContrast params.baseModulationContrast params.baseModulationContrast 0];
