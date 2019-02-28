@@ -176,7 +176,7 @@ MaxMelDirection.describe.observerAge = protocolParams.observerAge;
 MaxMelDirection.describe.photoreceptorClasses = MaxMelDirection.describe.directionParams.photoreceptorClasses;
 MaxMelDirection.describe.T_receptors = MaxMelDirection.describe.directionParams.T_receptors;
 
-LMSParams = OLDirectionParamsFromName('LMS_chrom_unipolar_600_80_2000', 'alternateDictionaryFunc', directionAlternateDictionary);
+LMSParams = OLDirectionParamsFromName('LMS_unipolar_600_80_4000', 'alternateDictionaryFunc', directionAlternateDictionary);
 %[ LMSDirection, MaxMelBackground ] = OLDirectionNominalFromParams(LMSParams, cal, 'observerAge',protocolParams.observerAge, 'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
 [ LMSDirection, LMSBackground ] = OLDirectionNominalFromParams(LMSParams, cal, 'observerAge',protocolParams.observerAge, 'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
 
@@ -188,7 +188,7 @@ LMSDirection.describe.T_receptors = LMSDirection.describe.directionParams.T_rece
 % Get receptor sensitivities used, so that we can get cone contrasts out below.
 receptorStrings = MaxMelDirection.describe.directionParams.photoreceptorClasses;
 fieldSizes = [MaxMelDirection.describe.directionParams.fieldSizeDegrees, MaxMelDirection.describe.directionParams.fieldSizeDegrees, MaxMelDirection.describe.directionParams.fieldSizeDegrees, MaxMelDirection.describe.directionParams.fieldSizeDegrees];
-protocolParams.receptors = GetHumanPhotoreceptorSS(MaxMelDirection.calibration.describe.S,receptorStrings,fieldSizes,protocolParams.observerAge,6,[],[]);
+protocolParams.receptors = GetHumanPhotoreceptorSS(MaxMelDirection.calibration.describe.S,receptorStrings,fieldSizes,protocolParams.observerAge,observerParams.pupilDiameterMm,[],[]);
 
 
 % Hello for this direction
