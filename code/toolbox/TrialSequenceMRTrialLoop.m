@@ -33,7 +33,7 @@ events = struct;
 %
 % This code is a curious mixture of PTB and mgl calls.  Not sure we need to
 % ListenChar(2), but not sure we don't.
-ListenChar(2);
+%ListenChar(2);
 while (~isempty(mglGetKeyEvent)), end
 
 %% Wait for 't' -- the go-signal from the scanner
@@ -111,7 +111,7 @@ postTrialLoopKeyPresses = mglListener('getAllKeyEvents');
 %% Record when the block ended and undo key listening
 tBlockEnd = mglGetSecs;
 if (protocolParams.verbose), fprintf('- Done with block.\n'); end
-ListenChar(0);
+%ListenChar(0);
 
 %% Put the trial information into the response struct
 responseStruct.events = events;

@@ -32,7 +32,7 @@ protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 % order below matches the contrast angle vector above.
 % Max values for Box D in 10/18 are [-22.5,..,112.5] => [0.085,0.20,0.40,0.13] and [-45,...,90] => [.12, .14, .60 , .22];
 
-protocolParams.maxContrastPerDirection = [0.085,0.20,0.40,0.13]; 
+protocolParams.maxContrastPerDirection = [0.085,0.20,0.38,0.13]; 
 
 
 % Number of trials
@@ -86,12 +86,12 @@ protocolParams.attentionTask = true;
 protocolParams.attentionSegmentDuration = 12;
 protocolParams.attentionEventDuration = 0.5;
 protocolParams.attentionMarginDuration = 2;
-protocolParams.attentionEventProb = 2/3;
+protocolParams.attentionEventProb = 3/24;
 protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxD';
-protocolParams.calibrationType = 'BoxDRandomizedLongCableDStubbyEyePiece1_ND00';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece1_ND00';
 
 
 %% Validation parameters
