@@ -18,7 +18,7 @@ trialTypeParams.contrastLevels = [1];
 % Number of trials
 %
 % Should be an integer multiple of number of trial types
-protocolParams.nTrials = 144;
+protocolParams.nTrials = 135;
 protocolParams.contrastLevels = ones(1,protocolParams.nTrials);
 
 
