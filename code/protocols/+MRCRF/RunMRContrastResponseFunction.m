@@ -25,7 +25,7 @@ protocolParams.takeTempearatureMeasurements = true;
 [modulationsCellArray,pulseParams] = MRCRF.makeTemporalModulations(ConeDirectedDirections,ConeDirectedBackground,trialTypeParams,protocolParams);
 
 %% Run the experiment.
-% must be run together 
+% must be run together
 protocolParams = MRCRF.makeTrialOrder(protocolParams,modulationsCellArray);
 ApproachEngine(ol,protocolParams,modulationsCellArray,pulseParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
 

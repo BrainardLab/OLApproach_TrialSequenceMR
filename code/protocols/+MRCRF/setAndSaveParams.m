@@ -26,13 +26,13 @@ function [protocolParams,trialTypeParams,ConeDirectedDirections,ConeDirectedBack
 trialTypeParams.contrastLevels = [1, 0.5, 0.25, 0.125, 0.0625, 0.0];
 
 %set the contrast vector angle in the LM plane.
-%  0 = L, 90 = M, 45 = L+M, -45 = L-M;
+%  0 = L, 90 = M, 45 = L+M, -45 = L-M;   [-22.5, 22.5, 67.5, 112.5];  
 protocolParams.LMVectorAngles =[-22.5, 22.5, 67.5, 112.5];  
 protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 % order below matches the contrast angle vector above.
 % Max values for Box D in 10/18 are [-22.5,..,112.5] => [0.085,0.20,0.40,0.13] and [-45,...,90] => [.12, .14, .60 , .22];
 
-protocolParams.maxContrastPerDirection = [0.085,0.20,0.38,0.13]; 
+protocolParams.maxContrastPerDirection = [0.085,0.20,0.40,0.13]; 
 
 
 % Number of trials
@@ -388,6 +388,7 @@ for jj = 1:length(directions)
     end
     fprintf('*\tValiadtion Done: pre-corrections\n');
 end
+
 %% Correction direction, validate post correction
 fprintf('*\tStarting Corrections\n');
 lightlevelScalar = OLMeasureLightlevelScalar(ol, cal, radiometer);
