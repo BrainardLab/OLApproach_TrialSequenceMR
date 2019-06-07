@@ -46,7 +46,7 @@ switch userID
     case {'melanopsin' 'pupillab'}
         materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_data/'];
-    case {'ldogexperimenter'}
+    case {'ldogexperimenter' 'ldog_experimenter'}
         materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/LDOG_data/'];
     case {'dhb'}
