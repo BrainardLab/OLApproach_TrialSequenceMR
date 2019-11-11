@@ -11,7 +11,7 @@ protocolParams.emailRecipient = 'huseyinozenc.taskin@pennmedicine.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = true;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.radiometer = false;
 
 % Need to figure out what "directions" is as compared to "modDirection".
 
@@ -35,4 +35,4 @@ ApproachEngine(ol,protocolParams,modulationsCellArray,temporalParams,'acquisitio
 % this automatically. However the extra line of code shouldn't hurt.
 ol.setAll(false);
 %% Post-Experiemnt Validations. 
-%MRMaxFlash.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,modDirection,background,directions);
+MRMaxFlash.postExpValidation(protocolParams,ol,modDirection,background,directions);

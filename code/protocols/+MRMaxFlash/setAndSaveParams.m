@@ -163,6 +163,51 @@ nullDirection = OLDirection_unipolar.Null(cal);
 
 modDirection.describe.observerAge = protocolParams.observerAge;
 
+%% Perform pre-stimulus validation.
+% Make spectroradiographic measurements prior to the experiment.
+% Note that this will ultimately likely occur after stimulus correction
+% (spectrum seeking or correction to contrast), but this step has not yet
+% been implemented.
+% Note also that this code as currently written will not say anything about
+% contrast -- this requires the specification of photoreceptors, which has
+% not been done.
+
+% set up radiometer
+if protocolParams.simulate.radiometer
+    radiometer = [];
+else
+    radiometerPauseDuration = 0;
+    ol.setAll(true);
+    commandwindow;
+    fprintf('- Focus the radiometer and press enter to pause %d seconds and start measuring.\n', radiometerPauseDuration);
+    input('');
+    ol.setAll(false);
+    pause(radiometerPauseDuration);
+    radiometer = OLOpenSpectroRadiometerObj('PR-670');
+end
+
+% perform validations
+for ii = 1:protocolParams.nValidationsPerDirection
+   
+    OLValidateDirection(modDirection, modBackground, ol, radiometer, 'label', 'preexperiment');
+    
+end
+
+% turn off radiometer
+if exist('radiometer', 'var')
+    try
+        radiometer.shutDown
+    end
+end
+
+% save directionObjects
+directionObjectsSavePath = fullfile(getpref('MRMaxFlash', 'DirectionObjectsBasePath'), protocolParams.observerID,protocolParams.todayDate);
+if ~exist(directionObjectsSavePath)
+    mkdir(directionObjectsSavePath)
+end
+
+directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
+save(directionObjectSaveName,'modDirection','modBackground');
 
 
 end 
