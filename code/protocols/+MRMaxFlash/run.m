@@ -35,4 +35,4 @@ ApproachEngine(ol,protocolParams,modulationsCellArray,temporalParams,'acquisitio
 % this automatically. However the extra line of code shouldn't hurt.
 ol.setAll(false);
 %% Post-Experiemnt Validations. 
-MRMaxFlash.postExpValidation(protocolParams,ol,modDirection,background,directions);
+MRMaxFlash.postExpValidation(protocolParams,ol,modDirection,background);
