@@ -10,7 +10,6 @@ temporalParams = OLWaveformParamsFromName('MaxContrastSinusoid');
 temporalParams.stimulusDuration = 12; % in sec
 temporalParams.timeStep = 1/100;
 
-
 % First make a modulation with 0% contrast and thus no flicker
 temporalParams.frequency = 1; % Give this some non-zero frequency so it doesn't break
 waveforms = OLWaveformFromParams(temporalParams);

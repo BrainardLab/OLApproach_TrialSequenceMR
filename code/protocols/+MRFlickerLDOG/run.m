@@ -10,7 +10,7 @@ protocolParams.protocolOutputName = 'MRFlickerLDOG';
 protocolParams.emailRecipient = 'huseyinozenc.taskin@pennmedicine.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = true;
+protocolParams.simulate.makePlots = false;
 protocolParams.simulate.radiometer = true;
 
 
