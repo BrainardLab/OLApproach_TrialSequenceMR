@@ -29,6 +29,8 @@ p.parse(varargin{:});
 
 %% Get trial order
 repElement = [1 2];
+% The item from the modulation cell array
 protocolParams.trialTypeOrder(1,:) = repmat(repElement,1,protocolParams.nTrials./length(repElement));
+% The relative contrast
 protocolParams.trialTypeOrder(2,:) = ones(1,protocolParams.nTrials);
 

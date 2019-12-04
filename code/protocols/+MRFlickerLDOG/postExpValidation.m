@@ -1,4 +1,4 @@
-function [] = postExpValidation(protocolParams,ol,modDirection,modBackground)
+function [] = postExpValidation(protocolParams,ol,LplusSDirection,LminusSDirection,RodMelDirection,modBackground)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -16,23 +16,22 @@ else
 end
 
 
-for ii = 1:protocolParams.nValidationsPerDirection
-   
-    OLValidateDirection(modDirection, modBackground, ol, radiometer, 'label', 'postexperiment');
-    
+for ii = 1:protocolParams.nValidationsPerDirection   
+    OLValidateDirection(LplusSDirection, modBackground, ol, radiometer, 'receptors', LplusSDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
+    OLValidateDirection(LminusSDirection, modBackground, ol, radiometer, 'receptors', LminusSDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
+    OLValidateDirection(RodMelDirection, modBackground, ol, radiometer, 'receptors', RodMelDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
 end
-
 
 
 %% Save post experiment validations:
 % save directionObjects
-directionObjectsSavePath = fullfile(getpref('MRMaxFlash', 'DirectionObjectsBasePath'), protocolParams.observerID,protocolParams.todayDate);
+directionObjectsSavePath = fullfile(getpref('MRFlickerLDOG', 'DirectionObjectsBasePath'), protocolParams.observerID,protocolParams.todayDate);
 if ~exist(directionObjectsSavePath)
     mkdir(directionObjectsSavePath)
 end
 
 directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
-save(directionObjectSaveName,'modDirection','modBackground');
+save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','modBackground');
 
 %% Close PR-670
 if exist('radiometer', 'var')

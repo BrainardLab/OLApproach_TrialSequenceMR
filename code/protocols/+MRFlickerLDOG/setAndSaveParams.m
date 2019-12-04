@@ -1,4 +1,4 @@
-function [protocolParams,LSDirection,LSBackground, ol]  = setAndSaveParams(protocolParams)
+function [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,modBackground, ol]  = setAndSaveParams(protocolParams)
 
 
 % setAndSaveParams
@@ -15,10 +15,10 @@ function [protocolParams,LSDirection,LSBackground, ol]  = setAndSaveParams(proto
 %
 % Should be an integer multiple of number of trial types
 
-% We are thinking here of 28, 12 second trials. Each trial is either the
+% We are thinking here of 36, 12 second trials. Each trial is either the
 % flashing lights or the dark, mirrors off state. The total acquisition
 % time would be 336 seconds.
-protocolParams.nTrials = 28;
+protocolParams.nTrials = 36;
 protocolParams.contrastLevels = ones(1,protocolParams.nTrials);
 
 
@@ -81,7 +81,7 @@ protocolParams.nValidationsPerDirection = 5;
 
 %% Information we prompt for and related
 commandwindow;
-protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'HERO_xxxx');
+protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'Nxxx');
 protocolParams.observerAge = GetWithDefault('>> Enter <strong>observer age</strong>:', 32);
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 protocolParams.sessionName = GetWithDefault('>> Enter <strong>session name</strong>:', 'session_1');
@@ -145,26 +145,25 @@ save(modulationSaveName,'cal','observerParams','protocolParams');
 %% Open the OneLight
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
 
-
 % Background is one-half full on (all mirrors on)
-modBackground = 0.5 .* OLDirection_unipolar.FullOn(cal);
+halfOnSettings = 0.5 .* OLDirection_unipolar.FullOn(cal);
 
 % grab photoreceptors
 S = cal.describe.S;
-photoreceptorClasses = { 'LConeTabulatedAbsorbance', 'SConeTabulatedAbsorbance', 'Melanopsin', 'Rods'};
+photoreceptorClasses = { 'LConeCanine', 'SConeCanine', 'Melanopsin', 'RodCanine'};
 
 fieldSize = 27.5;
 observerAge = 32;
 pupilDiameter = 4.7;
 lambdaMaxShift = [-5,9,0,0];
 
-for i = 1:length(photoreceptorClasses)
-    T_receptors(i,:) = GetHumanPhotoreceptorSS(S,...
-        photoreceptorClasses(i),...
+for ii = 1:length(photoreceptorClasses)
+    T_receptors(ii,:) = MRFlickerLDOG.GetCaninePhotoreceptorSS(S,...
+        photoreceptorClasses(ii),...
         fieldSize,...
         observerAge,...
         pupilDiameter,...
-        lambdaMaxShift(i));
+        lambdaMaxShift(ii));
 end
 
 % common direction params to all directions
@@ -177,22 +176,48 @@ directionParams.directionsYoked = 1;
 directionParams.directionsYokedAbs = 1;
 
 
-% for L+S direction
+
+%% Create the L+S direction
 directionParams.whichReceptorsToIgnore = [];
 directionParams.whichReceptorsToIsolate = [1, 2];
 directionParams.whichReceptorsToMinimize = [];
-directionParams.modulationContrast = [0.45 0.45];
-directionParams.primaryHeadRoom = 0.000;
+directionParams.modulationContrast = [0.35 0.35];
+directionParams.primaryHeadRoom = 0.005;
 
 % add common background to the direction
-directionParams.background = modBackground;
+directionParams.background = halfOnSettings;
 
-[LSDirection, LSBackground] = OLDirectionNominalFromParams(directionParams, cal);
+% Create this direction
+[LplusSDirection, modBackground] = OLDirectionNominalFromParams(directionParams, cal);
+
+
+%% Create the L-S direction
+directionParams.whichReceptorsToIgnore = [];
+directionParams.whichReceptorsToIsolate = [1, 2];
+directionParams.whichReceptorsToMinimize = [];
+directionParams.modulationContrast = [0.25 -0.25];
+directionParams.primaryHeadRoom = 0.005;
+
+% add common background to the direction
+directionParams.background = halfOnSettings;
+
+% Create this direction
+[LminusSDirection, ~] = OLDirectionNominalFromParams(directionParams, cal);
 
 
 
-nullDirection = OLDirection_unipolar.Null(cal);
+%% Create the Rod+Mel direction
+directionParams.whichReceptorsToIgnore = [];
+directionParams.whichReceptorsToIsolate = [3, 4];
+directionParams.whichReceptorsToMinimize = [];
+directionParams.modulationContrast = [0.5 0.5];
+directionParams.primaryHeadRoom = 0.005;
 
+% add common background to the direction
+directionParams.background = halfOnSettings;
+
+% Create this direction
+[RodMelDirection, ~] = OLDirectionNominalFromParams(directionParams, cal);
 
 
 
@@ -220,10 +245,10 @@ else
 end
 
 % perform validations
-for ii = 1:protocolParams.nValidationsPerDirection
-   
-    OLValidateDirection(LSDirection, LSBackground, ol, radiometer, 'label', 'preexperiment');
-    
+for ii = 1:protocolParams.nValidationsPerDirection   
+    OLValidateDirection(LplusSDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
+    OLValidateDirection(LminusSDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
+    OLValidateDirection(RodMelDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
 end
 
 % turn off radiometer
@@ -240,7 +265,7 @@ if ~exist(directionObjectsSavePath)
 end
 
 directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
-save(directionObjectSaveName,'LSDirection','LSBackground');
+save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','modBackground');
 
 
 end 
