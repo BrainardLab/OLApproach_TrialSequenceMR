@@ -7,7 +7,7 @@ frequencySet = [0, 4, 8, 16, 32, 64];
 %
 % Make temporal waveform for my experiment
 temporalParams = OLWaveformParamsFromName('MaxContrastSinusoid');
-temporalParams.stimulusDuration = 3; % in sec
+temporalParams.stimulusDuration = 12; % in sec
 temporalParams.timeStep = 1/100;
 
 

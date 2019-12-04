@@ -33,6 +33,7 @@ protocolParams.contrastLevels = ones(1,protocolParams.nTrials);
 %    parameters altogether.]
 observerParams.fieldSizeDegrees = 60;
 observerParams.pupilDiameterMm = 8;
+protocolParams.observerAge = 32;
 protocolParams.observerParams = observerParams;
 
 %% Trial timing parameters.
@@ -82,10 +83,8 @@ protocolParams.nValidationsPerDirection = 5;
 %% Information we prompt for and related
 commandwindow;
 protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'Nxxx');
-protocolParams.observerAge = GetWithDefault('>> Enter <strong>observer age</strong>:', 32);
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 protocolParams.sessionName = GetWithDefault('>> Enter <strong>session name</strong>:', 'session_1');
-
 
 
 %% Parameters
@@ -152,18 +151,16 @@ halfOnSettings = 0.5 .* OLDirection_unipolar.FullOn(cal);
 S = cal.describe.S;
 photoreceptorClasses = { 'LConeCanine', 'SConeCanine', 'Melanopsin', 'RodCanine'};
 
-fieldSize = 27.5;
+fieldSize = 60;
 observerAge = 32;
-pupilDiameter = 4.7;
-lambdaMaxShift = [-5,9,0,0];
+pupilDiameter = 8;
 
 for ii = 1:length(photoreceptorClasses)
     T_receptors(ii,:) = MRFlickerLDOG.GetCaninePhotoreceptorSS(S,...
         photoreceptorClasses(ii),...
         fieldSize,...
         observerAge,...
-        pupilDiameter,...
-        lambdaMaxShift(ii));
+        pupilDiameter);
 end
 
 % common direction params to all directions
