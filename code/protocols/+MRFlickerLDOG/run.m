@@ -9,9 +9,9 @@ protocolParams.protocol = 'MRFlickerLDOG';
 protocolParams.protocolOutputName = 'MRFlickerLDOG';
 protocolParams.emailRecipient = 'huseyinozenc.taskin@pennmedicine.upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
+protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = false;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.radiometer = false;
 
 
 %% Set up all the parameters and make Modulations
