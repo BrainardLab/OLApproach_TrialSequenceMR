@@ -1,14 +1,14 @@
-function [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,modBackground, ol]  = setAndSaveParams(protocolParams)
-
-
-% setAndSaveParams
+function [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,modBackground, ol] = setAndSaveParams(protocolParams)
+% Set up the stimuli and experimental protocol
 %
+% Syntax:
+%  [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,modBackground, ol] = MRFlickerLDOG.setAndSaveParams(protocolParams)
+
 % Description:
-%   Define the parameters for the MRContrastResponseFunction protocol of the
-%   OLApproach_TrialSequenceMR approach, and then invoke each of the
-%   steps required to set up and run a session of the experiment.
-
-
+%	Define the parameters for the MRFlickerLDOG protocol of the
+%   OLApproach_TrialSequenceMR approach, and then invoke each of the steps
+%   required to set up and run a session of the experiment.
+%
 
 
 % Number of trials

@@ -1,144 +1,20 @@
 function [T_energyNormalized,T_quantalIsomerizations,nominalLambdaMax] = GetCaninePhotoreceptorSS(S, photoreceptorClasses, fieldSizeDegrees, ageInYears,...
     pupilDiameterMm, lambdaMaxShift, fractionPigmentBleached, vesselOxyFraction, vesselOverallThicknessUm)
-% [T_energyNormalized,T_quantalIsomerizations,nominalLambdaMax] = GetHumanPhotoreceptorSS(S, photoreceptorClasses, fieldSizeDegrees, ageInYears, pupilDiameterMm,
+% Produces photopigment sensitivities for canine photoreceptors
+%
+% Syntax:
+% [T_energyNormalized,T_quantalIsomerizations,nominalLambdaMax] = GetCaninePhotoreceptorSS(S, photoreceptorClasses, fieldSizeDegrees, ageInYears, pupilDiameterMm,
 %   lambdaMaxShift, fractionPigmentBleached, vesselOxyFraction, vesselOverallThicknessUm)
 %
-% Produces photopigment sensitivities that we often need, and allowing
-% variation in age and lambda-max.  T_energyNormalized are the sensitivities
-% in energy units, normalized to max of 1.  T_quantalIosmerizations are the
-% probability of an isomerization for quantal unit input.
+% Description:
+%   Modified from GetHumanPhotoreceptorSS, which lives in the
+%   SilentSubstitutionToolbox. Please see that routine for details
+%   regarding the inputs and outputs.
 %
-% If empty variables are passed for any of the following variables, defaults will be assumed.
+%   I suspect that much of the code prior to the "Loop through the
+%   photoreceptorClasses" stage could be removed or at least greatly
+%   reduced, but have not taken this on yet.
 %
-% Input:
-%   S (1x3)                         - Wavelength spacing.
-%                                     Default: [380 2 201]
-%   photoreceptorClasses (cell)     - Cell with names of photoreceptor classes.
-%                                     Supported options: 'LConeTabulatedAbsorbance', 'MConeTabulatedAbsorbance', 'SConeTabulatedAbsorbance',
-%                                                        'LConeTabulatedAbsorbance2Deg', 'MConeTabulatedAbsorbance2Deg', 'SConeTabulatedAbsorbance2Deg',
-%                                                        'LConeTabulatedAbsorbance10Deg', 'MConeTabulatedAbsorbance10Deg', 'SConeTabulatedAbsorbance10Deg',
-%                                                        'LConeTabulatedAbsorbancePenumbral', 'MConeTabulatedAbsorbancePenumbral', 'SConeTabulatedAbsorbancePenumbral',
-%                                                        'Melanopsin',
-%                                                        'Rods',
-%                                                        'LConeSSNomogramLegacy', 'MConeSSNomogramLegacy','MConeSSNomogramLegacy'
-%                                                        'LCone10DegTabulatedSS', 'MCone10DegTabulatedSS', 'SCone10DegTabulatedSS',
-%                                                        'LCone2DegTabulatedSS', 'MCone2DegTabulatedSS', 'SCone2DegTabulatedSS'
-%                                     Note: See below for a description of each of these options.
-%                                     Default: {'LConeTabulatedAbsorbance' ; 'MConeTabulatedAbsorbance' ; 'SConeTabulatedAbsorbance'}
-%   fieldSizeDegrees (1x1)          - Field size in degrees. Can be a
-%                                     scalar or a vector with same length
-%                                     as photoreceptorClasses. In this
-%                                     case, each receptor sensitivity is
-%                                     computed with the corresponding field
-%                                     size. Default: 10
-%   ageInYears (1x1)                - Observer age in years.
-%                                     Default: 32
-%   pupilDiameterMm (1x1)           - Pupil diameter in mm.
-%                                     Default: 3
-%   lambdaMaxShift                  - Shift of lambda-max.
-%                                     Can be scalar, in which case same value is used for all classes.  Or a
-%                                     vector of same length as photoreceptorClasses.
-%                                     Default: 0
-%   fractionPigmentBleached         - Fraction of pigment bleached.
-%                                     Vector of same size as number of photoreceptor classes.
-%                                     Default: 0 for each entry.
-%   vesselOxyFraction               - Fraction of oxygenated blood assumed.
-%                                     Default: 0.85
-%   vesselOverallThicknessUm        - Thickness of vessel in um
-%                                     Default: 5
-% Output:
-%   T_energyNormalized              - Spectral sensitivities in energy
-%                                     units (normalized to max.).
-%   T_quantaIsomerization           - Spectral sensitivities in quanta
-%                                     units.  These may be used to compute
-%                                     isomerizations from retinal illuminance
-%   nominalLambdaMax                - Peak of photopigment absorption spectrum spectral sensitivities (no density taken into account).
-%                                     This does not take any shift in lambdaMax applied into account.  In a a few cases it is sort
-%                                     of made up because there was no explicit underlying absorption spectrum.
-%
-% NOTES:
-%   A) The Penumbral variants take into account an estimate of the absorption spectrum of hemoglobin as seen through retinal
-%   blood vessels.
-%
-%   B) Not all variants have a meaningful T_quantalIsomerizations variable returned.  When we don't have that sensitivity
-%   easily, a vector of NaN's of the right size is returned instead.
-%
-%   C) The 'Legacy' versions are estimates that we used in some of our early work and that we now don't think are as good as the current ones.
-%   They are still here because sometimes we need to figure out what we did in the past.
-%
-%   D) Passed fractionBleached numbers don't affect rod, melanopsin, or tabulated cone calculations.
-%   We throw an error if any of these ever receives a non-zero value.  Also, you cannot use different fraction bleached values
-%   for two different variants of the same cone class (e.g. 'LConeTabulatedAbsorbance' and 'LConeTabulatedAbsorbancePenumbral'). To
-%   work around, make two seprate calls, each with the appropriate fraction bleached.
-%
-%   E) If you pass lambdaMaxShift as a scalar, the same value of lambdaMaxShift is applied to all classes computed within a single call to this function.
-%   This seems unlikely to be a good behavior, but I am keeping it for backwards compatibility. You can now also pass lambdaMaxShift as a vector
-%   to specify a different shift for each photoreceptor class, which seems more sensible.
-%
-%   F) Description of the possible photoreceptor classes
-%
-%   LMS cone fundamentals, calculated from the tabulated Stockman-Sharpe
-%   absorbances. These are fully adjustable:
-%       'LConeTabulatedAbsorbance', 'MConeTabulatedAbsorbance', 'SConeTabulatedAbsorbance'
-%
-%   LMS cone fundamentals, calculated from the tabulated Stockman-Sharpe
-%   absorbances, but ignoring the 'field size' input parameter, and pegging it to 2 and 10 deg:, respectively.
-%   These respect the age parameter but are not otherwise adjustable:
-%       2 deg: 'LConeTabulatedAbsorbance2Deg', 'MConeTabulatedAbsorbance2Deg', 'SConeTabulatedAbsorbance2Deg'
-%       10 deg: 'LConeTabulatedAbsorbance10Deg', 'MConeTabulatedAbsorbance10Deg', 'SConeTabulatedAbsorbance10Deg'
-%
-%   LMS penumbral cone fundmantals, calculated from the tabulated Stockman-Sharpe
-%   absorbances and incorporating filtering due to retinal vessels. These are fully adjustable:
-%       'LConeTabulatedAbsorbancePenumbral', 'MConeTabulatedAbsorbancePenumbral', 'SConeTabulatedAbsorbancePenumbral'
-%
-%   Melanopsin, calculated using the Govardovskii nomogram at 480 nm as defined in
-%   PTB's DefaultPhotoreceptors. This is fully adjustable:
-%       'Melanopsin'
-%
-%   Rods, calculated using the Govardovskii nomogram at 491 nm as defined in
-%   PTB's DefaultPhotoreceptors. This is fully adjustable:
-%       'Rods'
-%
-%   LMS cone fundamentals, calculated using the Stockman-Sharpe nomogram
-%   (not recommended). This is included only for legacy purposes and might
-%   be removed at some point. Don't use these:
-%       'LConeSSNomogramLegacy', 'MConeSSNomogramLegacy','MConeSSNomogramLegacy'
-%
-%   LMS cone fundamentals defined in T_cones_ss2 and T_cones_ss10. Does not
-%   adjust the filtering parameters or other individual differences
-%   parameters. Provided mostly to have a unified interface to get these
-%   spectral sensitivities.
-%       2 deg: 'LCone2DegTabulatedSS', 'MCone2DegTabulatedSS', 'SCone2DegTabulatedSS'
-%       10 deg: 'LCone10DegTabulatedSS', 'MCone10DegTabulatedSS', 'SCone10DegTabulatedSS
-%
-%  G) The nominal lambda-max values returned for the spectral sensitivities based on the
-%  tabulated absorbances for the open-field cones are 555.3, 525.1 and
-%  419.5 nm. These are given on p. 33 in CIE 2006:170.
-
-% 7/20/17   ms    Updated options and comments.
-% 1/21/14   ms    Wrote it based on old code.
-% 5/24/14   dhb   Remove vestigal references to a returned labels variable.
-% 5/26/14   dhb   Fix bug: 'Melanopsin-2' was being computed with a shift of -1.
-%           dhb   Simplify return interface.  Add many comments.
-%           dhb   Return isomerization sensitivities for hemoglobin variants.
-% 11/21/14  ms    Cleaned up and commented
-% 12/12/14  dhb   More cleaning and comments.
-%                 This now takes hemoglobin parameters.
-%                 Manuel did this but didn't leave a comment.  I pushed the
-%                 responsibility for prompting up to the caller.
-% 10/22/15  dhb   Added note about how the lambdaMaxShift parameter works when it is a scalar.
-%           dhb   Allow passing lambdaMax as a vector.
-%           dhb   Make return nominalLambdaMax take the shift into account,
-%                 and always fill in something.
-%           dhb   Apply lambdaMaxShift in a few cases where it did not apply before.
-% 10/25/15  dhb   Change back so that nominalLambdaMax returned does NOT take the shift into account.
-% 12/4/15   ms    Added 2-deg Stockman-Sharp fundamentals.
-% 2/9/16    ms    Added penumbral cones from tabulated absorbances
-% 7/22/17   dhb   Multiply penumbral quantal sensitivities in isomerization units by blood transmittance, too.
-% 7/22/17   dhb   Add some error checking for a case where we just previously had a comment about an edge case
-%                 where fraction bleached specification could go south, and a comment about the workaround.
-% 7/20/18   dhb   Allow fieldSizeDegrees to be a vector of same length as
-%                 photoreceptor classes.
 
 %% Set defaults
 
@@ -220,9 +96,11 @@ nominalLambdaMax = [];
 if (length(fieldSizeDegrees) == 1)
     fieldSizeDegrees = fieldSizeDegrees*ones(length(photoreceptorClasses),1);
 end
-for i = 1:length(photoreceptorClasses)
-    theClass = photoreceptorClasses{i};
-    whichClass = i;
+
+%% Loop through the photoreceptorClasses
+for ii = 1:length(photoreceptorClasses)
+    theClass = photoreceptorClasses{ii};
+    whichClass = ii;
     
     % Get lambdaMaxShift to use for this class.
     if (length(lambdaMaxShift) == 1)
@@ -268,7 +146,7 @@ for i = 1:length(photoreceptorClasses)
             photoreceptors.nomogram.S = S;
             nominalLambdaMaxTmp = photoreceptors.nomogram.lambdaMax;
             photoreceptors.nomogram.lambdaMax = nominalLambdaMaxTmp;
-            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
+            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(ii);
             photoreceptors.ageInYears = ageInYears;
             photoreceptors.pupilDiameter.value = pupilDiameterMm;
 
@@ -294,7 +172,7 @@ for i = 1:length(photoreceptorClasses)
             photoreceptors.nomogram.S = S;
             nominalLambdaMaxTmp = photoreceptors.nomogram.lambdaMax;
             photoreceptors.nomogram.lambdaMax = nominalLambdaMaxTmp;
-            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
+            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(ii);
             photoreceptors.ageInYears = ageInYears;
             photoreceptors.pupilDiameter.value = pupilDiameterMm;
 
@@ -320,7 +198,7 @@ for i = 1:length(photoreceptorClasses)
             photoreceptors.nomogram.S = S;
             nominalLambdaMaxTmp = photoreceptors.nomogram.lambdaMax;
             photoreceptors.nomogram.lambdaMax = nominalLambdaMaxTmp;
-            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
+            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(ii);
             photoreceptors.ageInYears = ageInYears;
             photoreceptors.pupilDiameter.value = pupilDiameterMm;
 
@@ -346,8 +224,8 @@ end
 %% Normalize energy sensitivities.
 %
 % They might already be normalized in most cases, but this makes sure.
-for i = 1:size(T_energyNormalized)
-    T_energyNormalized(i,:) = T_energyNormalized(i,:)/max(T_energyNormalized(i,:));
+for ii = 1:size(T_energyNormalized)
+    T_energyNormalized(ii,:) = T_energyNormalized(ii,:)/max(T_energyNormalized(ii,:));
 end
 
 %% Check
