@@ -234,22 +234,34 @@ for i = 1:length(photoreceptorClasses)
     end
     
     switch theClass
-        case 'Melanopsin'
+        case 'MelCanine'
             % Melanopsin
-            photoreceptors = DefaultPhotoreceptors('LivingHumanMelanopsin');
-            photoreceptors.nomogram.S = S;
+            photoreceptors.species = 'Canine';
+            photoreceptors.types = {'Melanopsin'};
+            photoreceptors.nomogram.S = [380 2 201];
+            photoreceptors.axialDensity.source = 'Value provided directly';
+            photoreceptors.axialDensity.value = 0.015;
+            photoreceptors.nomogram.source = 'Govardovskii';
+            photoreceptors.nomogram.lambdaMax = 480;
             nominalLambdaMaxTmp = photoreceptors.nomogram.lambdaMax;
-            photoreceptors.nomogram.lambdaMax = nominalLambdaMaxTmp+lambdaMaxShiftUse;
-            photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
-            photoreceptors.ageInYears = ageInYears;
-            photoreceptors.pupilDiameter.value = pupilDiameterMm;
-            photoreceptors = FillInPhotoreceptors(photoreceptors);
+            photoreceptors.quantalEfficiency.source = 'Generic';
+            photoreceptors.fieldSizeDegrees = 10;  % This value is used in the CIE lens transmittance calcs, so not relevant here.
+            photoreceptors.ageInYears = 32; % This value is used in the CIE lens transmittance calcs, so not relevant here.
+            photoreceptors.pupilDiameter.value = 3;  % This value is used in the CIE lens transmittance calcs, so not relevant here.
+            photoreceptors.lensDensity.source = 'None'; % We will add the dog lens in a moment
+            photoreceptors.macularPigmentDensity.source = 'None';
+
+            % Add the canine lens density field
+            photoreceptors = MRFlickerLDOG.addCanineLensDensity(photoreceptors);
+
+            % Fill in the photoreceptors
+            photoreceptors = FillInPhotoreceptors(photoreceptors);            
             
             % Add to the receptor vector
             T_energyNormalized = [T_energyNormalized ; photoreceptors.energyFundamentals];
             T_quantalIsomerizations = [T_quantalIsomerizations ; photoreceptors.isomerizationAbsorptance];
             nominalLambdaMax = [nominalLambdaMax nominalLambdaMaxTmp];
-
+            
         case 'RodCanine'
             % Rods
             photoreceptors = DefaultPhotoreceptors('LivingDog');
@@ -259,18 +271,23 @@ for i = 1:length(photoreceptorClasses)
             photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
             photoreceptors.ageInYears = ageInYears;
             photoreceptors.pupilDiameter.value = pupilDiameterMm;
+
+            % Add the canine lens density field
+            photoreceptors = MRFlickerLDOG.addCanineLensDensity(photoreceptors);
+
+            % Fill in the photoreceptors
             photoreceptors = FillInPhotoreceptors(photoreceptors);
-            
+                        
             % Add to the receptor vector
             T_energyNormalized = [T_energyNormalized ; photoreceptors.energyFundamentals];
             T_quantalIsomerizations = [T_quantalIsomerizations ; photoreceptors.isomerizationAbsorptance];
             nominalLambdaMax = [nominalLambdaMax nominalLambdaMaxTmp];
-
+            
             % Return the third entry
             T_energyNormalized = T_energyNormalized(3,:);
             T_quantalIsomerizations = T_quantalIsomerizations(3,:);
             nominalLambdaMax = nominalLambdaMax(3);
-
+            
         case 'LConeCanine'
             % L Cone
             photoreceptors = DefaultPhotoreceptors('LivingDog');
@@ -280,18 +297,23 @@ for i = 1:length(photoreceptorClasses)
             photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
             photoreceptors.ageInYears = ageInYears;
             photoreceptors.pupilDiameter.value = pupilDiameterMm;
+
+            % Add the canine lens density field
+            photoreceptors = MRFlickerLDOG.addCanineLensDensity(photoreceptors);
+
+            % Fill in the photoreceptors
             photoreceptors = FillInPhotoreceptors(photoreceptors);
             
             % Add to the receptor vector
             T_energyNormalized = [T_energyNormalized ; photoreceptors.energyFundamentals];
             T_quantalIsomerizations = [T_quantalIsomerizations ; photoreceptors.isomerizationAbsorptance];
             nominalLambdaMax = [nominalLambdaMax nominalLambdaMaxTmp];
-
+            
             % Return the third entry
             T_energyNormalized = T_energyNormalized(1,:);
             T_quantalIsomerizations = T_quantalIsomerizations(1,:);
             nominalLambdaMax = nominalLambdaMax(1);
-
+            
         case 'SConeCanine'
             % S cone
             photoreceptors = DefaultPhotoreceptors('LivingDog');
@@ -301,18 +323,23 @@ for i = 1:length(photoreceptorClasses)
             photoreceptors.fieldSizeDegrees = fieldSizeDegrees(i);
             photoreceptors.ageInYears = ageInYears;
             photoreceptors.pupilDiameter.value = pupilDiameterMm;
-            photoreceptors = FillInPhotoreceptors(photoreceptors);
+
+            % Add the canine lens density field
+            photoreceptors = MRFlickerLDOG.addCanineLensDensity(photoreceptors);
+
+            % Fill in the photoreceptors
+            photoreceptors = FillInPhotoreceptors(photoreceptors);            
             
             % Add to the receptor vector
             T_energyNormalized = [T_energyNormalized ; photoreceptors.energyFundamentals];
             T_quantalIsomerizations = [T_quantalIsomerizations ; photoreceptors.isomerizationAbsorptance];
             nominalLambdaMax = [nominalLambdaMax nominalLambdaMaxTmp];
-
+            
             % Return the third entry
             T_energyNormalized = T_energyNormalized(2,:);
             T_quantalIsomerizations = T_quantalIsomerizations(2,:);
             nominalLambdaMax = nominalLambdaMax(2);
-
+            
     end
 end
 

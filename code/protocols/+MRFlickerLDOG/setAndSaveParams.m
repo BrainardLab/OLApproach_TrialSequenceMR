@@ -149,7 +149,7 @@ halfOnSettings = 0.5 .* OLDirection_unipolar.FullOn(cal);
 
 % grab photoreceptors
 S = cal.describe.S;
-photoreceptorClasses = { 'LConeCanine', 'SConeCanine', 'Melanopsin', 'RodCanine'};
+photoreceptorClasses = { 'LConeCanine', 'SConeCanine', 'MelCanine', 'RodCanine'};
 
 fieldSize = 60;
 observerAge = 32;
@@ -207,7 +207,7 @@ directionParams.background = halfOnSettings;
 directionParams.whichReceptorsToIgnore = [];
 directionParams.whichReceptorsToIsolate = [3, 4];
 directionParams.whichReceptorsToMinimize = [];
-directionParams.modulationContrast = [0.5 0.5];
+directionParams.modulationContrast = [0.50 0.50];
 directionParams.primaryHeadRoom = 0.005;
 
 % add common background to the direction
