@@ -255,6 +255,14 @@ if exist('radiometer', 'var')
     end
 end
 
+% Report contrasts
+fprintf('LplusS contrasts:\n');
+contrastObserved = median(reshape(extractfield(LplusSDirection.describe.validation,'contrastActual'),[4 2 protocolParams.nValidationsPerDirection]),3)
+fprintf('LminusS contrasts:\n');
+contrastObserved = median(reshape(extractfield(LminusSDirection.describe.validation,'contrastActual'),[4 2 protocolParams.nValidationsPerDirection]),3)
+fprintf('RodMel contrasts:\n');
+contrastObserved = median(reshape(extractfield(RodMelDirection.describe.validation,'contrastActual'),[4 2 protocolParams.nValidationsPerDirection]),3)
+
 % save directionObjects
 directionObjectsSavePath = fullfile(getpref('MRFlickerLDOG', 'DirectionObjectsBasePath'), protocolParams.observerID,protocolParams.todayDate);
 if ~exist(directionObjectsSavePath)
