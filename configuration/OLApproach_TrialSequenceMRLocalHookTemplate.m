@@ -27,6 +27,7 @@ theProtocols = { ...
     'MRMMTCombined' ...
     'MRMMTMel' ...
     'MRMMTLMS' ...
+    'MRFlickerLDOG' ...
     };
 
 %% Remove old preferences
@@ -47,7 +48,7 @@ switch userID
         materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_data/'];
     case {'ldogexperimenter' 'ldog_experimenter'}
-        materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
+        materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/LDOG_materials'];
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/LDOG_data/'];
     case {'dhb'}
         materialsBasePath = ['/Users1'  '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
