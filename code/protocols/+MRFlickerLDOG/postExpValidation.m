@@ -1,4 +1,4 @@
-function [] = postExpValidation(protocolParams,ol,LplusSDirection,LminusSDirection,RodMelDirection,modBackground)
+function [] = postExpValidation(protocolParams,ol,LplusSDirection,LminusSDirection,RodMelDirection,LightFluxDirection,modBackground)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -20,6 +20,7 @@ for ii = 1:protocolParams.nValidationsPerDirection
     OLValidateDirection(LplusSDirection, modBackground, ol, radiometer, 'receptors', LplusSDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
     OLValidateDirection(LminusSDirection, modBackground, ol, radiometer, 'receptors', LminusSDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
     OLValidateDirection(RodMelDirection, modBackground, ol, radiometer, 'receptors', RodMelDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
+    OLValidateDirection(LightFluxDirection, modBackground, ol, radiometer, 'receptors', RodMelDirection.describe.directionParams.T_receptors, 'label', 'postexperiment');    
 end
 
 
@@ -31,7 +32,7 @@ if ~exist(directionObjectsSavePath)
 end
 
 directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
-save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','modBackground');
+save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','LightFluxDirection','modBackground');
 
 %% Close PR-670
 if exist('radiometer', 'var')
