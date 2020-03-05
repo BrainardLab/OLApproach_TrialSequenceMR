@@ -1,4 +1,4 @@
-function [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,modBackground, ol] = setAndSaveParams(protocolParams)
+function [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,LightFluxDirection,modBackground, ol] = setAndSaveParams(protocolParams)
 % Set up the stimuli and experimental protocol
 %
 % Syntax:
@@ -36,40 +36,9 @@ observerParams.pupilDiameterMm = 8;
 protocolParams.observerAge = 32;
 protocolParams.observerParams = observerParams;
 
-%% Trial timing parameters.
-%
-% Trial duration - total time for each trial.
-protocolParams.trialDuration = 12;
 
-% There is a minimum time at the start of each trial where the background
-% is presented.  Then the actual trial start time is chosen based on a
-% random draw from the jitter parameters.
-protocolParams.trialBackgroundTimeSec = 0;                 % Time background is on before stimulus can start
-protocolParams.trialMinJitterTimeSec = 0;                  % Minimum time after background Time before step
-protocolParams.trialMaxJitterTimeSec = 0;                  % Phase shifts in seconds
 
-% Set ISI time in seconds
-protocolParams.isiTime = 0;
 
-%% Attention task parameters
-%
-% Currently, if you have an attention event then all trial types
-% must have the same duration, and the attention event duration
-% must match the trial duration.  These constraints could be relaxed
-% by making the attentionSegmentDuration part of the trialType parameter
-% set and by generalizing the way attention event information is generated
-% within routine InitializeBlockStructArray.
-%
-% Also note that we assume that the dimming is visible when presented at
-% any moment within any trial, even if the contrast is zero on that trial
-% or it is a minimum contrast decrement, etc.  Would have to worry about how
-% to handle this if that assumption is not valid.
-protocolParams.attentionTask = true;
-protocolParams.attentionSegmentDuration = 12;
-protocolParams.attentionEventDuration = 0.5;
-protocolParams.attentionMarginDuration = 1;
-protocolParams.attentionEventProb = 1/10000;
-protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxC';
@@ -217,6 +186,22 @@ directionParams.background = halfOnSettings;
 [RodMelDirection, ~] = OLDirectionNominalFromParams(directionParams, cal);
 
 
+%% Create the LightFlux direction
+directionParams.whichReceptorsToIgnore = [];
+directionParams.whichReceptorsToIsolate = [1, 2, 3, 4];
+directionParams.whichReceptorsToMinimize = [];
+directionParams.modulationContrast = [0.95 0.95 0.95 0.95];
+directionParams.primaryHeadRoom = 0.005;
+
+% add common background to the direction
+directionParams.background = halfOnSettings;
+
+% Create this direction
+[LightFluxDirection, ~] = OLDirectionNominalFromParams(directionParams, cal);
+
+
+
+
 
 %% Perform pre-stimulus validation.
 % Make spectroradiographic measurements prior to the experiment.
@@ -246,6 +231,7 @@ for ii = 1:protocolParams.nValidationsPerDirection
     OLValidateDirection(LplusSDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
     OLValidateDirection(LminusSDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
     OLValidateDirection(RodMelDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
+    OLValidateDirection(LightFluxDirection, modBackground, ol, radiometer, 'receptors', T_receptors, 'label', 'preexperiment');    
 end
 
 % turn off radiometer
@@ -262,6 +248,8 @@ fprintf('LminusS contrasts:\n');
 contrastObserved = median(reshape(extractfield(LminusSDirection.describe.validation,'contrastActual'),[4 2 protocolParams.nValidationsPerDirection]),3)
 fprintf('RodMel contrasts:\n');
 contrastObserved = median(reshape(extractfield(RodMelDirection.describe.validation,'contrastActual'),[4 2 protocolParams.nValidationsPerDirection]),3)
+fprintf('LightFlux contrasts:\n');
+contrastObserved = median(reshape(extractfield(LightFluxDirection.describe.validation,'contrastActual'),[4 2 protocolParams.nValidationsPerDirection]),3)
 
 % save directionObjects
 directionObjectsSavePath = fullfile(getpref('MRFlickerLDOG', 'DirectionObjectsBasePath'), protocolParams.observerID,protocolParams.todayDate);
@@ -270,7 +258,7 @@ if ~exist(directionObjectsSavePath)
 end
 
 directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
-save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','modBackground');
+save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','LightFluxDirection','modBackground');
 
 
 end 
