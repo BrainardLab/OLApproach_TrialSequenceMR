@@ -205,6 +205,7 @@ while stillMeasuring
     end
     
     % Add the trial order to the protocol params
+    protocolParams.trialTypeOrder = [];
     protocolParams.trialTypeOrder(1,:) = trialOrders{protocolParams.acquisitionNumber};
     protocolParams.trialTypeOrder(2,:) = contrastLevels;
     
