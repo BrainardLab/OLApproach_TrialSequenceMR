@@ -1,6 +1,6 @@
 function [modulationsCellArray,temporalParams, protocolParams] = makeTemporalModulationsFMRI(modDirection,modBackground, protocolParams)
 
-frequencySet = [0, 4, 8, 16, 32, 64];
+frequencySet = [0, 12];
 
 
 
