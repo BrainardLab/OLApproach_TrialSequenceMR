@@ -31,7 +31,7 @@ protocolParams.contrastLevels = ones(1,protocolParams.nTrials);
 % [* NOTE: DHB, MB: Need to fix up how these make it to validations.]
 % [* NOTE: DHB, MB: Someday want to pull these out of background and direction
 %    parameters altogether.]
-observerParams.fieldSizeDegrees = 60;
+observerParams.fieldSizeDegrees = 30;
 observerParams.pupilDiameterMm = 8;
 protocolParams.observerAge = 32;
 protocolParams.observerParams = observerParams;
@@ -41,8 +41,8 @@ protocolParams.observerParams = observerParams;
 
 
 %% OneLight parameters
-protocolParams.boxName = 'BoxC';
-protocolParams.calibrationType = 'BoxCRandomizedLongCableAEyePiece2';
+protocolParams.boxName = 'BoxD';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAEyePiece2ND07';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
@@ -51,7 +51,7 @@ protocolParams.nValidationsPerDirection = 5;
 
 %% Information we prompt for and related
 commandwindow;
-protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'Nxxx');
+protocolParams.observerID = GetWithDefault('>> Enter <strong>subject ID</strong>', 'Nxxx');
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 protocolParams.sessionName = GetWithDefault('>> Enter <strong>session name</strong>:', 'session_1');
 
@@ -257,7 +257,7 @@ if ~exist(directionObjectsSavePath)
     mkdir(directionObjectsSavePath)
 end
 
-directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
+directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat')
 save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','LightFluxDirection','modBackground');
 
 

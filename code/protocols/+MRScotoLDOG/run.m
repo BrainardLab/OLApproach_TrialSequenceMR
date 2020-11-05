@@ -5,8 +5,8 @@ clear
 %
 % Who we are and what we're doing today
 protocolParams.approach = 'OLApproach_TrialSequenceMR';
-protocolParams.protocol = 'MRScoto_LDOG';
-protocolParams.protocolOutputName = 'MRScoto_LDOG';
+protocolParams.protocol = 'MRScotoLDOG';
+protocolParams.protocolOutputName = 'MRScotoLDOG';
 protocolParams.emailRecipient = 'huseyinozenc.taskin@pennmedicine.upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = false;
@@ -16,7 +16,7 @@ protocolParams.simulate.radiometer = false;
 
 %% Set up all the parameters and make Modulations
 [protocolParams,LplusSDirection,LminusSDirection,RodMelDirection,LightFluxDirection,modBackground, ol] = ...
-    MRScoto_LDOG.setAndSaveParams(protocolParams);
+    MRScotoLDOG.setAndSaveParams(protocolParams);
 
 
 %% Set the OneLight to the background
@@ -64,7 +64,7 @@ while stillMeasuring
     end
 
     % Get the temporal modulations for this acquisition
-    [modulationsCellArray,temporalParams,protocolParams] = MRScoto_LDOG.makeTemporalModulationsPupil(LightFluxDirection,modBackground,protocolParams);
+    [modulationsCellArray,temporalParams,protocolParams] = MRScotoLDOG.makeTemporalModulationsPupil(LightFluxDirection,modBackground,protocolParams);
     
     % Add the trial order to the protocol params
     protocolParams.trialTypeOrder = [];
@@ -114,7 +114,7 @@ while stillMeasuring
     end
 
     % Get the temporal modulations for this acquisition
-    [modulationsCellArray,temporalParams,protocolParams] = MRScoto_LDOG.makeTemporalModulationsFMRI(LightFluxDirection,modBackground,protocolParams);
+    [modulationsCellArray,temporalParams,protocolParams] = MRScotoLDOG.makeTemporalModulationsFMRI(LightFluxDirection,modBackground,protocolParams);
     
     % Add the trial order to the protocol params
     protocolParams.trialTypeOrder = [];
@@ -127,5 +127,5 @@ while stillMeasuring
 end
 
 %% Post-Experiemnt Validations.
-MRScoto_LDOG.postExpValidation(protocolParams,ol,LplusSDirection,LminusSDirection,RodMelDirection,LightFluxDirection,modBackground);
+MRScotoLDOG.postExpValidation(protocolParams,ol,LplusSDirection,LminusSDirection,RodMelDirection,LightFluxDirection,modBackground);
 

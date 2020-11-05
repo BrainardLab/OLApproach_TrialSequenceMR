@@ -41,8 +41,8 @@ protocolParams.observerParams = observerParams;
 
 
 %% OneLight parameters
-protocolParams.boxName = 'BoxC';
-protocolParams.calibrationType = 'BoxCRandomizedLongCableAEyePiece2';
+protocolParams.boxName = 'BoxD';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAEyePiece2';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
@@ -257,7 +257,7 @@ if ~exist(directionObjectsSavePath)
     mkdir(directionObjectsSavePath)
 end
 
-directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat');
+directionObjectSaveName = fullfile(directionObjectsSavePath,'directionObject.mat')
 save(directionObjectSaveName,'LplusSDirection','LminusSDirection','RodMelDirection','LightFluxDirection','modBackground');
 
 
