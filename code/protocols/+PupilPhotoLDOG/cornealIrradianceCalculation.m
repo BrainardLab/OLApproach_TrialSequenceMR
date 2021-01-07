@@ -10,10 +10,10 @@ clear;
 S = [380 1 401];
 
 % Load BoxD calibration result
-load('/Users/aguirre/Dropbox (Aguirre-Brainard Lab)/LDOG_materials/Experiments/OLApproach_TrialSequenceMR/OneLightCalData/OLBoxDRandomizedLongCableAEyePiece2ND07.mat')
+load('/Users/aguirre/Dropbox (Aguirre-Brainard Lab)/LDOG_materials/Experiments/OLApproach_TrialSequenceMR/OneLightCalData/OLBoxDRandomizedLongCableAEyePiece2ND06.mat')
 
 % Get the raw SPD for the full-on background
-whichCal = 2;
+whichCal = length(cals);
 theRawSpd = SplineSpd(cals{whichCal}.describe.S,cals{whichCal}.raw.fullOn,S);
 
 % Load CIE 1931 CMFs

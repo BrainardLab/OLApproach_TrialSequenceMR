@@ -42,7 +42,7 @@ protocolParams.observerParams = observerParams;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxD';
-protocolParams.calibrationType = 'BoxDRandomizedLongCableAEyePiece2ND07';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAEyePiece2ND06';
 protocolParams.takeCalStateMeasurements = true;
 protocolParams.takeTempearatureMeasurements = true;
 
@@ -51,7 +51,7 @@ protocolParams.nValidationsPerDirection = 5;
 
 %% Information we prompt for and related
 commandwindow;
-protocolParams.observerID = GetWithDefault('>> Enter <strong>user name</strong>', 'Nxxx');
+protocolParams.observerID = GetWithDefault('>> Enter <strong>subject name</strong>', 'Nxxx');
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
 protocolParams.sessionName = GetWithDefault('>> Enter <strong>session name</strong>:', 'session_1');
 
