@@ -20,6 +20,7 @@ theApproach = 'OLApproach_TrialSequenceMR';
 
 %% Define protocols for this approach
 theProtocols = { ...
+    'MRAGTC' ...
     'MRCRF' ...
     'MRMMT' ...
     'MRMaxFlash' ...
@@ -62,6 +63,9 @@ switch userID
     case {'nicolas'}
         materialsBasePath = '/Volumes/Manta TM HD/Dropbox (Aguirre-Brainard Lab)/MELA_materials';
         dataBasePath = '/Volumes/Manta TM HD/Dropbox (Aguirre-Brainard Lab)/MELA_datadev';
+    case {'aguirre'} % Directories for which I have write access, allowing code testing
+        materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
+        dataBasePath = '/Users/aguirre/Desktop/MELA_datadev';
     otherwise
         materialsBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_materials'];
         dataBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/MELA_datadev/'];
