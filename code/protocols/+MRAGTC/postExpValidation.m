@@ -1,4 +1,4 @@
-function [] = postExpValidation(numValidations,protocolParams,ol,directedDirection,background,directions)
+function [] = postExpValidation(numValidations,protocolParams,ol,directedDirection,background,directionTypes)
 
 %% Let user get the radiometer set up and do post-experiment validation
 %
@@ -17,18 +17,8 @@ end
 
 
 for jj = 1:length(directedDirection)
-    switch directions{jj}
-        case 'ConeDirectedDirection1'
-            directionType = 'LminusM';
-        case 'ConeDirectedDirection2'
-            directionType = 'LplusM';
-        case 'ConeDirectedDirection3'
-            directionType = 'LIsolating';
-        case 'ConeDirectedDirection4'
-            directionType = 'MIsolating';
-    end
     for ii = 1:numValidations
-        OLValidateDirection(directedDirection{jj},background,ol,radiometer,'receptors', protocolParams.receptors , 'label', ['post-experiment-', directionType]);
+        OLValidateDirection(directedDirection{jj},background,ol,radiometer,'receptors', protocolParams.receptors , 'label', ['post-experiment-', directionTypes{jj}]);
     end
 end
 

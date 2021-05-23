@@ -1,4 +1,4 @@
-function [protocolParams,trialTypeParams,PhotoreceptorDirections,PhotoreceptorBackground, ol, directions]  = setAndSaveParams(protocolParams)
+function [protocolParams,trialTypeParams,PhotoreceptorDirections,PhotoreceptorBackground, ol, directionTypes]  = setAndSaveParams(protocolParams)
 
 
 % setAndSaveParams

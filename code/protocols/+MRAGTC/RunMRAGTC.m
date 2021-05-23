@@ -16,7 +16,7 @@ protocolParams.takeCalStateMeasurements = false;
 protocolParams.takeTempearatureMeasurements = false;
 
 %% Set up all the parameters and make Modulations
-[protocolParams,trialTypeParams,PhotoreceptorDirections,PhotoreceptorBackground, ol, directions]  = MRAGTC.setAndSaveParams(protocolParams);
+[protocolParams,trialTypeParams,PhotoreceptorDirections,PhotoreceptorBackground, ol, directionTypes]  = MRAGTC.setAndSaveParams(protocolParams);
 
 %% Make the temporal modulations for experiment
 [modulationsCellArray,flickerParams] = MRAGTC.makeTemporalModulations(PhotoreceptorDirections,PhotoreceptorBackground,trialTypeParams,protocolParams);
@@ -46,4 +46,4 @@ while stillScanning
 end
 
 %% Post-Experiemnt Validations. 
-MRAGTC.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,PhotoreceptorDirections,PhotoreceptorBackground,directions);
+MRAGTC.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,PhotoreceptorDirections,PhotoreceptorBackground,directionTypes);
