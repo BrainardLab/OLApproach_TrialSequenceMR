@@ -21,17 +21,29 @@ protocolParams.takeTempearatureMeasurements = false;
 %% Make the temporal modulations for experiment
 [modulationsCellArray,flickerParams] = MRAGTC.makeTemporalModulations(PhotoreceptorDirections,PhotoreceptorBackground,trialTypeParams,protocolParams);
 
-%% Create the trial order
-protocolParams = MRAGTC.makeTrialOrder(protocolParams,modulationsCellArray);
+%% While not done
+stillScanning = true;
+while stillScanning
+    acquisitionNumber = input('Enter acquisition (aka scan) number (99 to exit): ');
 
-%     % Add the trial order to the protocol params
-%     protocolParams.trialTypeOrder = [];
-%     protocolParams.trialTypeOrder(1,:) = trialOrders{protocolParams.acquisitionNumber};
-%     protocolParams.trialTypeOrder(2,:) = contrastLevels;
+    if acquisitionNumber == 99
+        
+        % Done scanning
+        stillScanning=false;
 
-    
-%% Run the experiment
-ApproachEngine(ol,protocolParams,modulationsCellArray,flickerParams,'acquisitionNumber',[],'verbose',protocolParams.verbose);
+    else
+        
+        % Store the acquisition number
+        protocolParams.acquisitionNumber = acquisitionNumber;
+        
+        % Create the trial order
+        protocolParams = MRAGTC.makeTrialOrder(protocolParams,modulationsCellArray);
+
+        % Run the experiment
+        ApproachEngine(ol,protocolParams,modulationsCellArray,flickerParams,'acquisitionNumber',protocolParams.acquisitionNumber,'verbose',protocolParams.verbose);
+
+    end
+end
 
 %% Post-Experiemnt Validations. 
 MRAGTC.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,PhotoreceptorDirections,PhotoreceptorBackground,directions);

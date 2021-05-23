@@ -6,7 +6,7 @@ function block = InitializeBlockStructArray(protocolParams,pulseParams,modulatio
 %
 % Description:
 %     The block structure contains trial-by-trial information about the
-%     experiemnt such as start/stops values.  One of the key jobs of this
+%     experiment such as start/stops values.  One of the key jobs of this
 %     routine is (optionally) to modify the starts/stops values to include
 %     an attention task stimulus, which is a dimming of the full field.
 %
