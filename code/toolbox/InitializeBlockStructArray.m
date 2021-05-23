@@ -5,13 +5,13 @@ function block = InitializeBlockStructArray(protocolParams,pulseParams,modulatio
 %     block = InitializeBlockStructArray(protocolParams,modulationData)
 %
 % Description:
-%     The block structure contains trial-by-trial information about the experiemnt such as 
-%     start/stops values.  One of the key jobs of this routine is (optionally) to 
-%     modify the starts/stops values to include an attention task stimulus, which is a 
-%     dimming of the full field.
+%     The block structure contains trial-by-trial information about the
+%     experiemnt such as start/stops values.  One of the key jobs of this
+%     routine is (optionally) to modify the starts/stops values to include
+%     an attention task stimulus, which is a dimming of the full field.
 %
-%     It is possible that the attention task code should be yet further factorized into
-%     its own separate function.
+%     It is possible that the attention task code should be yet further
+%     factorized into its own separate function.
 %     
 % Input:
 %     protocolParams (struct)            A struct that contain the starts/stops.  Some key fields:
@@ -54,12 +54,15 @@ for trial = 1:length(protocolParams.trialTypeOrder)
         end     
         segmentDuration = protocolParams.trialDuration/nSegments;
         
-        % As far as we can tell, the code below was not written to handle the case where there was
-        % more than one segment per trial.  One would have to think through indexing from the segment
-        % back into indexing into the full starts/stops matrices for the trial to make it work.
+        % As far as we can tell, the code below was not written to handle
+        % the case where there was more than one segment per trial.  One
+        % would have to think through indexing from the segment back into
+        % indexing into the full starts/stops matrices for the trial to
+        % make it work.
         % 
-        % One day, we may need more than one attention event per trial, but right now we don't.
-        % So, just throw an error for now.  It would be pretty easy to fix if needed.
+        % One day, we may need more than one attention event per trial, but
+        % right now we don't. So, just throw an error for now.  It would be
+        % pretty easy to fix if needed.
         if (nSegments ~= 1)
             error('Code is not currently set up to handle more than one attention segment per trial. See comments in code about this.');
         end
