@@ -84,7 +84,7 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxD';
-protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece1_ND00';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece';
 
 
 %% Validation parameters
