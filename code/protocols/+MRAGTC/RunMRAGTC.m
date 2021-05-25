@@ -9,9 +9,10 @@ protocolParams.protocol = 'MRAGTC';
 protocolParams.protocolOutputName = 'AGTC';
 protocolParams.emailRecipient = 'aguirreg@upenn.edu';
 protocolParams.verbose = true;
-protocolParams.simulate.oneLight = true;
-protocolParams.simulate.makePlots = true;
-protocolParams.simulate.radiometer = true;
+protocolParams.simulate.oneLight = false;
+protocolParams.simulate.makePlots = flase;
+protocolParams.simulate.radiometer = false;
+protocolParams.performCorrection = false;
 protocolParams.takeCalStateMeasurements = false;
 protocolParams.takeTempearatureMeasurements = false;
 

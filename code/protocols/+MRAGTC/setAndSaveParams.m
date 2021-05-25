@@ -22,10 +22,10 @@ function [protocolParams,trialTypeParams,PhotoreceptorDirections,PhotoreceptorBa
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
 trialTypeParams.contrastLevels = [1];
-trialTypeParams.frequency = [1, 1, 1, 1, 0.0];
+trialTypeParams.frequency = [8, 16, 4, 16, 0.0];
 protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 
-protocolParams.maxContrastPerDirection = [0.09,0.30,0.25,0.10,0]; 
+protocolParams.maxContrastPerDirection = [0.09,0.30,0.25,0.90,0]; 
 
 
 % Number of trials
@@ -49,7 +49,7 @@ protocolParams.observerParams = observerParams;
 %% Trial timing parameters.
 %
 % Trial duration - total time for each trial.
-protocolParams.trialDuration = 4;
+protocolParams.trialDuration = 10;
 
 % There is a minimum time at the start of each trial where
 % the background is presented.  Then the actual trial
@@ -274,12 +274,12 @@ PhotoreceptorBackground3 = PhotoreceptorBackground;
     'background',PhotoreceptorBackground3, ...
     'alternateBackgroundDictionaryFunc', backgroundAlternateDictionary);
 
-%% Make direction 4, Rod isolating
+%% Make direction 4, Omni: L+M+S+rod
 %
 % Only need to rewrite key parameters
 nDirections = nDirections+1;
 directions{nDirections} = 'PhotoreceptorDirection4';
-directionTypes{nDirections} = 'Rods';
+directionTypes{nDirections} = 'Omni';
 
 % We say which cones we want at a target contrast in the whichReceptorsToIsolate field.
 % The otherclasses get their contrasts pegged at zero. The indices refer to
@@ -288,8 +288,8 @@ directionTypes{nDirections} = 'Rods';
 % Again, the contrast was chosen by hand.
 PhotoreceptorDirectedParams4 = PhotoreceptorDirectedParams;
 maxContrast = protocolParams.maxContrastPerDirection(4);
-PhotoreceptorDirectedParams4.modulationContrast = maxContrast.*[1 1];
-PhotoreceptorDirectedParams4.whichReceptorsToIsolate = [7 8];
+PhotoreceptorDirectedParams4.modulationContrast = maxContrast.*[1 1 1 1 1 1 1 1];
+PhotoreceptorDirectedParams4.whichReceptorsToIsolate = [1 2 3 4 5 6 7 8];
 PhotoreceptorDirectedParams4.primaryHeadRoom = 0;
 PhotoreceptorBackground4 = PhotoreceptorBackground;
 [PhotoreceptorDirection4] = OLDirectionNominalFromParams(PhotoreceptorDirectedParams4, cal, ...
@@ -357,6 +357,7 @@ for dd = 1:length(directions)
     fprintf('\n\n');
 end
 
+
 %% Save Nominal Primaries:
 nominalSavePath = fullfile(getpref('MRAGTC','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
 % if ~exist(nominalSavePath)
@@ -383,40 +384,47 @@ nominalSavePath = fullfile(getpref('MRAGTC','DirectioNominalBasePath'),protocolP
 % [* NOTE: Add loop here for number of validations]
 
 
-fprintf('*\tStarting Validation: pre-corrections\n');
-
-for jj = 1:length(directions)
-    for ii = 1:protocolParams.nValidationsPerDirection
-        preCorrectionValidation = OLValidateDirection(eval(directions{jj}),PhotoreceptorBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionTypes{jj},'_pre-correction'));
+%% Optional spectral correction
+if protocolParams.performCorrection
+    
+    fprintf('*\tStarting Validation: pre-correction\n');
+    
+    for jj = 1:length(directions)
+        for ii = 1:protocolParams.nValidationsPerDirection
+            preCorrectionValidation = OLValidateDirection(eval(directions{jj}),PhotoreceptorBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionTypes{jj},'_pre-correction'));
+        end
+        fprintf('*\tValidation Done: pre-correction\n');
     end
-    fprintf('*\tValidation Done: pre-corrections\n');
-end
-
-
-%% Correction direction, validate post correction
-fprintf('*\tStarting Corrections\n');
-lightlevelScalar = OLMeasureLightlevelScalar(ol, cal, radiometer);
-OLCorrectDirection(PhotoreceptorBackground,OLDirection_unipolar.Null(cal),ol,radiometer,...
+    
+    
+    %% Correction direction, validate post correction
+    fprintf('*\tStarting Corrections\n');
+    lightlevelScalar = OLMeasureLightlevelScalar(ol, cal, radiometer);
+    OLCorrectDirection(PhotoreceptorBackground,OLDirection_unipolar.Null(cal),ol,radiometer,...
         'smoothness', .01,...
         'lightlevelScalar',lightlevelScalar);
-for qq = 1:length(directions)
-    OLCorrectDirection(eval(directions{qq}),PhotoreceptorBackground,ol,radiometer,...
-        'receptors', protocolParams.receptors, ...
-        'smoothness', .01,...
-        'lightlevelScalar',lightlevelScalar);
-    fprintf('*\tCorrection Done\n');
+    for qq = 1:length(directions)
+        OLCorrectDirection(eval(directions{qq}),PhotoreceptorBackground,ol,radiometer,...
+            'receptors', protocolParams.receptors, ...
+            'smoothness', .01,...
+            'lightlevelScalar',lightlevelScalar);
+        fprintf('*\tCorrection Done\n');
+    end
+    
 end
 
-fprintf('*\tStarting Validation: post-corrections\n');
+fprintf('*\tStarting Validation: pre-experiment\n');
 for mm = 1:length(directions)
     for kk = 1:protocolParams.nValidationsPerDirection
         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),PhotoreceptorBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionTypes{mm},'_post-correction'));
     end
-    fprintf('*\tValiadtion Done: post-corrections\n');
+    fprintf('*\tValidation Done: post-experiment\n');
 end
 
 
+% Assemble the set of modulations
 PhotoreceptorDirections = {PhotoreceptorDirection1,PhotoreceptorDirection2,PhotoreceptorDirection3,PhotoreceptorDirection4,PhotoreceptorDirection5};
+
 
 %% Save Corrected Primaries:
 correctedSavePath = fullfile(getpref('MRAGTC','DirectionCorrectedPrimariesBasePath'),protocolParams.observerID,protocolParams.todayDate);
