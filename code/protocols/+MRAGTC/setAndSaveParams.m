@@ -22,10 +22,10 @@ function [protocolParams,trialTypeParams,PhotoreceptorDirections,PhotoreceptorBa
 % Max contrast is 80% so i am setting the scalars to get [80, 40, 20, 10,
 % 5, 0]
 trialTypeParams.contrastLevels = [1];
-trialTypeParams.frequency = [8, 16, 4, 16, 0.0];
+trialTypeParams.frequency = [2, 4, 1, 4, 0.0];
 protocolParams.contrastLevels =  trialTypeParams.contrastLevels;
 
-protocolParams.maxContrastPerDirection = [0.09,0.30,0.25,0.90,0]; 
+protocolParams.maxContrastPerDirection = [0.09,0.25,0.25,0.90,0]; 
 
 
 % Number of trials
@@ -360,11 +360,7 @@ end
 
 %% Save Nominal Primaries:
 nominalSavePath = fullfile(getpref('MRAGTC','DirectioNominalBasePath'),protocolParams.observerID,protocolParams.todayDate);
-% if ~exist(nominalSavePath)
-%     mkdir(nominalSavePath)
-% end
-% modulationSaveName = fullfile(nominalSavePath,'nominalPrimaries.mat');
-% save(modulationSaveName,'colorDirection','PhotoreceptorBackground');
+
 
 %% Validate pre-correction
 % [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
