@@ -11,7 +11,7 @@ protocolParams.emailRecipient = 'aguirreg@upenn.edu';
 protocolParams.verbose = true;
 protocolParams.simulate.oneLight = false;
 protocolParams.simulate.makePlots = false;
-protocolParams.simulate.radiometer = false;
+protocolParams.simulate.radiometer = true;
 protocolParams.performCorrection = false;
 protocolParams.takeCalStateMeasurements = false;
 protocolParams.takeTempearatureMeasurements = false;
@@ -21,6 +21,9 @@ protocolParams.takeTempearatureMeasurements = false;
 
 %% Make the temporal modulations for experiment
 [modulationsCellArray,flickerParams] = MRAGTC.makeTemporalModulations(PhotoreceptorDirections,PhotoreceptorBackground,trialTypeParams,protocolParams);
+
+%% Set the OL to the stimulus background
+ol.setMirrors(modulationsCellArray{end}.backgroundStarts, modulationsCellArray{end}.backgroundStops);
 
 %% While not done
 stillScanning = true;
