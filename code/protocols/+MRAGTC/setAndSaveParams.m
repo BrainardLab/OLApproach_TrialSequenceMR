@@ -49,7 +49,7 @@ protocolParams.observerParams = observerParams;
 %% Trial timing parameters.
 %
 % Trial duration - total time for each trial.
-protocolParams.trialDuration = 10;
+protocolParams.trialDuration = 8;
 
 % There is a minimum time at the start of each trial where
 % the background is presented.  Then the actual trial
