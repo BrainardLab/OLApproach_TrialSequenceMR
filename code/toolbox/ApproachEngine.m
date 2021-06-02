@@ -93,10 +93,10 @@ mglListener('quit');
 %
 % Save protocolParams, block, responseStruct.
 % Make sure not to overwrite an existing file.
-outputFile = fullfile(savePath,[protocolParams.protocolOutputName,'_', protocolParams.sessionName sprintf('_scan%d.mat', protocolParams.acquisitionNumber)]);
+outputFile = fullfile(savePath,[protocolParams.protocolOutputName,'_', protocolParams.sessionName sprintf('_scan%02d.mat', protocolParams.acquisitionNumber)]);
 while (exist(outputFile,'file'))
     protocolParams.acquisitionNumber = input(sprintf('Output file %s exists, enter correct acquisition number: \n',outputFile));
-    outputFile = fullfile(savePath,[protocolParams.protocolOutputName,'_' protocolParams.sessionName sprintf('_scan%d.mat', protocolParams.acquisitionNumber)]);
+    outputFile = fullfile(savePath,[protocolParams.protocolOutputName,'_' protocolParams.sessionName sprintf('_scan%02d.mat', protocolParams.acquisitionNumber)]);
 end
 responseStruct.acquisitionNumber = protocolParams.acquisitionNumber;
 save(outputFile,'protocolParams', 'block', 'responseStruct');
