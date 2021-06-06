@@ -84,7 +84,7 @@ protocolParams.postAllTrialsWaitForKeysTime = 1;
 
 %% OneLight parameters
 protocolParams.boxName = 'BoxD';
-protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece_ND00';
 
 
 %% Validation parameters
@@ -95,6 +95,7 @@ commandwindow;
 protocolParams.observerID = GetWithDefault('>> Enter <strong>subject name</strong>', 'HERO_xxxx');
 protocolParams.observerAge = GetWithDefault('>> Enter <strong>subject age</strong>:', 32);
 protocolParams.todayDate = datestr(now, 'yyyy-mm-dd');
+protocolParams.sessionName = GetWithDefault('>> Enter <strong>session name</strong>:', 'session_1');
 
 %% Parameters
 %
