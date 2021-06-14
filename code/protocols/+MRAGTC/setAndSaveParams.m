@@ -154,6 +154,8 @@ save(modulationSaveName,'cal','observerParams','protocolParams','trialTypeParams
 ol = OneLight('simulate',protocolParams.simulate.oneLight,'plotWhenSimulating',protocolParams.simulate.makePlots); drawnow;
 
 %% Let user get the radiometer set up
+% Unusued. We are not validating / adjusting prior to these scans
+%{
 if protocolParams.simulate.radiometer
     radiometer = [];
 else
@@ -166,6 +168,7 @@ else
     pause(radiometerPauseDuration);
     radiometer = OLOpenSpectroRadiometerObj('PR-670');
 end
+%}
 
 %% Make a background of specified luminance and chromaticity
 %
@@ -364,22 +367,6 @@ nominalSavePath = fullfile(getpref('MRAGTC','DirectioNominalBasePath'),protocolP
 
 
 %% Validate pre-correction
-% [* NOTE: DHB, MB: Ask Joris: a) Will this keep pre and post validations
-%          straight? b) What is the idea about how we store this aspect of
-%          the data.  Just write out the direciton and background objects
-%          at this stage?]
-% [* NOTE: JV: Reply: a) I've added the kwarg 'label', which can take any
-%          string/charvector as label. I've named these 'pre-correction'
-%          and 'post-correction'. The validation struct also stores the
-%          actual (differential) primary values that it validated, so
-%          that's another way to check whether validation is pre/post
-%          correction.
-%          b) Saving out the direction and background objects will save out
-%          the validations stored in them as well. You can also extract the
-%          validation struct from the object, or by taking it as an output
-%          argument from OLValidateDirection.]
-% [* NOTE: Add loop here for number of validations]
-
 
 %% Optional spectral correction
 if protocolParams.performCorrection
@@ -410,14 +397,16 @@ if protocolParams.performCorrection
     
 end
 
+% Unusued. We are not validating / adjusting prior to these scans
+%{
 fprintf('*\tStarting Validation: pre-experiment\n');
 for mm = 1:length(directions)
     for kk = 1:protocolParams.nValidationsPerDirection
         postCorrectionValidation = OLValidateDirection(eval(directions{mm}),PhotoreceptorBackground,ol,radiometer,'receptors', protocolParams.receptors, 'label', strcat(directionTypes{mm},'_post-correction'));
     end
-    fprintf('*\tValidation Done: post-experiment\n');
+    fprintf('*\tValidation Done: pre-experiment\n');
 end
-
+%}
 
 % Assemble the set of modulations
 PhotoreceptorDirections = {PhotoreceptorDirection1,PhotoreceptorDirection2,PhotoreceptorDirection3,PhotoreceptorDirection4,PhotoreceptorDirection5};
