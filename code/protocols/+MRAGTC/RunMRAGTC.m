@@ -50,7 +50,7 @@ while stillScanning
 end
 
 %% Post-Experiemnt Validations. 
-validateFlag = input('Do you wish to perform stimulus validation? [Y/N]: ');
-if strcmp(validateFlag,'Y')
+validateFlag = input('Do you wish to perform stimulus validation? [Y/N]: ','s');
+if strcmpi(validateFlag,'Y')
     MRAGTC.postExpValidation(protocolParams.nValidationsPerDirection,protocolParams,ol,PhotoreceptorDirections,PhotoreceptorBackground,directionTypes);
 end
