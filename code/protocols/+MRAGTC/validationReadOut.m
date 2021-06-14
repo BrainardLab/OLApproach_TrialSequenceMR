@@ -6,7 +6,7 @@ receptorNames = {'L_2°','M_2°','S_2°','L_10°','M_10°','S_10°','rod_2°','r
 
 for dd = 1:4
     for ii = 1:5
-        k(:,:,ii)=directedDirection{dd}.describe.validation(ii+10).contrastActual;
+        k(:,:,ii)=directedDirection{dd}.describe.validation(end-5+ii).contrastActual;
     end
     contrasts = round(100.*median(k,3),1);
     fprintf(['\n' directionNames{dd} ':\n']);
