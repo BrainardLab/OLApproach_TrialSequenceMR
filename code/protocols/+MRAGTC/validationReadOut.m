@@ -16,9 +16,7 @@ for dd = 1:4
 end
 
 
-protocolParams.boxName = 'BoxD';
-protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece_ND00';
-cal = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType,'CalibrationDate','latest');
+cal = background.calibration;
 
 whichXYZ = 'xyzCIEPhys10';
 eval(['tempXYZ = load(''T_' whichXYZ ''');']);
