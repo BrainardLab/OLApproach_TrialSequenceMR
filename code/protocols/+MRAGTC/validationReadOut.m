@@ -14,3 +14,16 @@ for dd = 1:4
         fprintf(['\t' receptorNames{rr} ': %2.1f, %2.1f \n'],contrasts(rr,:))
     end
 end
+
+
+protocolParams.boxName = 'BoxD';
+protocolParams.calibrationType = 'BoxDRandomizedLongCableAStubbyEyePiece_ND00';
+cal = OLGetCalibrationStructure('CalibrationType',protocolParams.calibrationType,'CalibrationDate','latest');
+
+whichXYZ = 'xyzCIEPhys10';
+eval(['tempXYZ = load(''T_' whichXYZ ''');']);
+eval(['T_xyz = SplineCmf(tempXYZ.S_' whichXYZ ',683*tempXYZ.T_' whichXYZ ',cal.describe.S);']);
+
+backgroundxyY = XYZToxyY(T_xyz*OLPrimaryToSpd(cal,background.differentialPrimaryValues));
+fprintf('\n');
+fprintf('   * <strong>Background x, y, Y</strong>: %0.3f, %0.3f, %0.1f cd/m2\n',backgroundxyY(1),backgroundxyY(2),backgroundxyY(3));
