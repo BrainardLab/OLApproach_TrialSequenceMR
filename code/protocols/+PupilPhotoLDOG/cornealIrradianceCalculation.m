@@ -25,7 +25,7 @@ T_xyz = SplineCmf(S_xyz1931,683*T_xyz1931,S);
 
 % Desired lum and scale so that we have spectrum in
 % of desired luminance in Watts/sr-m2-nm.
-desiredLum = 800;
+desiredLum = 400;
 theSpd = desiredLum*theRawSpd/(T_xyz(2,:)*theRawSpd);
 
 % Compute effective luminous efficiency
