@@ -10,7 +10,7 @@ clear;
 S = [380 1 401];
 
 % Load BoxD calibration result
-load('/Users/aguirre/Dropbox (Aguirre-Brainard Lab)/LDOG_materials/Experiments/OLApproach_TrialSequenceMR/OneLightCalData/OLBoxDRandomizedLongCableAEyePiece2ND06.mat')
+load('/home/ozzy/Dropbox (Aguirre-Brainard Lab)/MELA_materials/Experiments/OLApproach_TrialSequenceMR/OneLightCalData/OLBoxBRandomizedLongCableAStubbyEyePiece1ND00.mat')
 
 % Get the raw SPD for the full-on background
 whichCal = length(cals);
